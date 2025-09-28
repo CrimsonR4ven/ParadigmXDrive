@@ -1,0 +1,83 @@
+﻿#root {
+    margin-left: 10vw;
+    text-align: left;
+}
+
+th, td {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+h1{
+    margin: 10px;
+}
+
+.LinkPhoto {
+    color: black;
+    height: 80%;
+    width: 230px;
+    display: flex;
+    align-items: center; /* Vertical alignment */
+    justify-content: center;
+    text-align: center;
+}
+.LinkHolder {
+    color: black;
+    display: flex;
+    align-items: center; /* Vertical alignment */
+    justify-content: left;
+    height: 20%;
+    width: 230px;
+    clear: left;
+    border-bottom: solid 1px grey;
+
+}
+.LinkHolder p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0;
+}
+.FolderButton {
+    background-color: lightcyan;
+    border-radius: 8px;
+    border: 1px solid grey;
+    margin: 10px;
+    height: 200px;
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px; /* padding wewnętrzny, ale nie zmienia wysokości */
+    overflow: hidden; /* ukryj nadmiar treści */
+    white-space: nowrap; /* nie zawijaj tekstu */
+    text-overflow: ellipsis; /* użyj ... dla obciętego tekstu */
+}
+.FolderButton:hover {
+    border: 1px solid grey;
+    background-color: lightgray;
+}
+.FileButton {
+    background-color: lightgoldenrodyellow;
+    border-radius: 8px;
+    border: 1px solid grey;
+    margin: 10px;
+    height: 200px;
+    width: 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px; /* padding wewnętrzny, ale nie zmienia wysokości */
+    overflow: hidden; /* ukryj nadmiar treści */
+    white-space: nowrap; /* nie zawijaj tekstu */
+    text-overflow: ellipsis; /* użyj ... dla obciętego tekstu */
+}
+.appcontainer
+{
+    margin: 0;
+    width: 90vw;
+    display:flex;
+    flex-wrap:wrap;
+}

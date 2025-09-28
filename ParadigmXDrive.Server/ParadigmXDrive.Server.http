@@ -1,0 +1,11 @@
+@ParadigmXDrive.Server_HostAddress = http://localhost:5222
+
+GET {{ParadigmXDrive.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{ParadigmXDrive.Server_HostAddress}}/file/GetFolderData/{folderName}
+Accept: application/json
+
+###
