@@ -74,6 +74,10 @@ h1{
     white-space: nowrap; /* nie zawijaj tekstu */
     text-overflow: ellipsis; /* użyj ... dla obciętego tekstu */
 }
+.FileButton:hover {
+    border: 1px solid grey;
+    background-color: palegoldenrod;
+}
 .appcontainer
 {
     margin: 0;

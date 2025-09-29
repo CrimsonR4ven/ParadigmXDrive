@@ -3,9 +3,77 @@ import {Link, useSearch} from "wouter";
 import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
 import dokumenten from './assets/icons9-document-512.png'
+import downloaden from './assets/icons8-download-96.png'
 import './App.css';
+import './inputStyle.css';
 
-function FilePreview({ image, name, onDivClick, type }) {
+function RenameWindow({ path, handleRenameCloseRef }) {
+
+    return (
+        <>
+            <div onClick={handleRenameCloseRef}  style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "100vh",
+                backgroundColor: "rgba(0,0,0,0.7)",
+                zIndex: 1003
+            }}>
+                {path}
+            </div>
+            <div
+                style={{
+                    position: "fixed",
+                    top: "45vh",
+                    left: "40vw",
+                    width: "20vw",
+                    height: "10vh",
+                    padding: "2vh 2vw",
+                    backgroundColor: "rgb(30,30,30)",
+                    zIndex: 1004,
+                    borderRadius: "16px",
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
+                    flexDirection: "column",
+                    textAlign: "center",
+                }}
+            >
+                <div className="input-wrapper">
+                    <input type="text" name="text" className="input" defaultValue={path.split('\\').at(-1).split('.')[0]} />
+                    <button className="Extention-btn">
+                        {"." + path.split('\\').at(-1).split('.')[1]}
+                    </button>
+                </div>
+            </div>
+        </>
+    )}
+
+function FilePreview({ image, path, onDivClick, type }) {
+    const [isRenameOpen, setIsRenameOpen] = useState(false);
+
+    const handleRenameOpen = () => {
+        setIsRenameOpen(true);
+    }
+
+    const handleRenameClose = () => {
+        setIsRenameOpen(false);
+    }
+
+    const handleFileDownload = () => {
+        fetch("/File/GetDownloadFile?path=" + path)
+            .then(res => res.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = path.split("\\").at(-1);
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            });
+    }
+
     return (<><div style={{
         position: "fixed",
         top: "0vh",
@@ -33,7 +101,9 @@ function FilePreview({ image, name, onDivClick, type }) {
             paddingLeft: 15,
             boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
         }}>
-             <img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p style={{ color: "white" }}>{name}</p>
+            <img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />
+            <p style={{ color: "white" }} onClick={() => handleRenameOpen()}>{path.split('\\').at(-1)}</p>
+            <img src={downloaden} alt="folder" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => handleFileDownload()} />
         </div>
     </div>
         <div
@@ -86,9 +156,7 @@ function FilePreview({ image, name, onDivClick, type }) {
                         fontSize: "14px",
                         cursor: "pointer",
                     }}
-                    onClick={() => {
-                        alert("Download clicked!");
-                    }}
+                    onClick={() => handleFileDownload()}
                 >
                     Download
                 </button>
@@ -109,7 +177,10 @@ function FilePreview({ image, name, onDivClick, type }) {
                 borderRadius: "20px",
             }}
         >
-        </div>)}</>)
+        </div>)}
+
+        {isRenameOpen && (<RenameWindow path={path} handleRenameCloseRef={() => handleRenameClose()}></RenameWindow>)}
+    </>)
 }
 
 function DriveFolderView() {
@@ -124,13 +195,14 @@ function DriveFolderView() {
     const [folders, setFolders] = useState();
 
     const handleOpen = (file) => {
-        switch (file.split('.')[1])
+        switch (file.split('.').at(-1))
         {
             case "jpg":
-            case "jepg":
+            case "jpeg":
             case "png":
             case "webp":
             case "gif":
+            case "ico":
                 setCurrentFileType("Image");
                 break;
             default:
@@ -143,7 +215,7 @@ function DriveFolderView() {
                 const url = URL.createObjectURL(blob);
                 setCurrentFilePreview(url);
             });
-        setCurrentFileName(file.replace("\\", ""));
+        setCurrentFileName(file);
         setIsOpen(true);
     };
 
@@ -189,15 +261,15 @@ function DriveFolderView() {
                 {folders.Files?.map((file, i) => (
                     <Link
                         key={`file-${i}`}
-                        onClick={() => handleOpen(file.Name)}
+                        onClick={(e) => { e.preventDefault(); handleOpen(file.Name) }}
                         className="FileButton"
                     >
-                        <div className="LinkHolder"><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("\\", "")}</p></div>
+                        <div className="LinkHolder" title={file.Name}><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("\\", "")}</p></div>
                         <div className="LinkPhoto"><img src={dokumenten} alt="file" style={{ height: "85%" }} /></div>
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview name={currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} ></FilePreview>)
+            {isOpen && (<FilePreview path={actualFolder + currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} ></FilePreview>)
             }
         </div>
     );

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using ParadigmXDrive.Server.Models;
 using ParadigmXDrive.Server.Types;
 using System.Net.WebSockets;
@@ -11,7 +12,7 @@ namespace ParadigmXDrive.Server.Controllers
     public class FileController : ControllerBase
     {
         private FolderStructure folderstruct;
-        private string[] imageExtentions = { "jpg", "jpeg", "gif", "webp", "png"};
+        private string[] imageExtentions = { "jpg", "jpeg", "gif", "webp", "png", "ico" };
         private readonly ILogger<FileController> _logger;
 
         public FileController(ILogger<FileController> logger)
@@ -36,9 +37,26 @@ namespace ParadigmXDrive.Server.Controllers
         public async Task<IActionResult> GetImageFile(string path)
         {
             var fullPath = folderstruct.GetImageFile(path);
-            if (!imageExtentions.Contains(path.Split('\\').Last().Split('.')[1])) return NotFound();
+            if (!imageExtentions.Contains(path.Split('.').Last())) return NotFound();
             byte[] imageBytes = System.IO.File.ReadAllBytes(fullPath);
             return File(imageBytes, "Image/png");
+        }
+
+        [HttpGet("GetDownloadFile")]
+        public async Task<IActionResult> GetDownloadFile(string path)
+        {
+            var fullPath = folderstruct.GetImageFile(path);
+            var name = Path.GetFileName(fullPath);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
+            return File(fileBytes, "Image/png", name);
+        }
+
+        [HttpPatch("UpdateFileName")]
+        public async Task<IActionResult> UpdateFileName(string path, string newName)
+        {
+            var fullPath = folderstruct.GetImageFile(path);
+            System.IO.File.Move(path, Path.GetDirectoryName(path) + newName + Path.GetExtension(path));
+            return Ok();
         }
     }
 }

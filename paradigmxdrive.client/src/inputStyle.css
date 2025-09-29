@@ -1,0 +1,48 @@
+.input-wrapper {
+    width: fit-content;
+    height: 45px;
+    border-radius: 20px;
+    padding: 7px;
+    box-sizing: content-box;
+    display: flex;
+    align-items: center;
+    background-color: whitesmoke;
+}
+
+
+.input {
+    width:15vw;
+    height: 100%;
+    border: none;
+    outline: none;
+    padding-left: 0.5vw;
+    background-color: whitesmoke;
+    color: rgb(30,30,30);
+    font-size: 1em;
+    overflow:hidden;
+}
+
+    .input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px #292524 inset;
+        -webkit-text-fill-color: #ffffff;
+    }
+
+.Extention-btn {
+    height: 100%;
+    width: 95px;
+    border: none;
+    border-radius: 15px;
+    color: whitesmoke;
+    cursor: default;
+    background-color: rgb(30,30,30);
+    font-weight: 500;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s;
+}
+.Extention-btn:focus {
+    outline:none
+}
