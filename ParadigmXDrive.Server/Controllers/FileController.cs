@@ -54,8 +54,9 @@ namespace ParadigmXDrive.Server.Controllers
         [HttpPatch("UpdateFileName")]
         public async Task<IActionResult> UpdateFileName(string path, string newName)
         {
+            Console.WriteLine($"org path: {path} new name: {newName}");
             var fullPath = folderstruct.GetImageFile(path);
-            System.IO.File.Move(path, Path.GetDirectoryName(path) + newName + Path.GetExtension(path));
+            System.IO.File.Move(fullPath, Path.GetDirectoryName(fullPath) + "\\" + newName + Path.GetExtension(fullPath));
             return Ok();
         }
     }

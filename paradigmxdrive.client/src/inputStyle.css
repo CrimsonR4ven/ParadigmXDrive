@@ -43,6 +43,43 @@
     position: relative;
     transition: all 0.3s;
 }
+.Save-btn {
+    height: 4vh;
+    width: 95px;
+    border: none;
+    border-radius: 15px;
+    color: rgb(30,30,30);
+    cursor: default;
+    background-color: whitesmoke;
+    font-weight: 500;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s;
+    margin-top: 1.5vh;
+    float: left;
+}
+.Cancel-btn {
+    height: 4vh;
+    width: 95px;
+    border: none;
+    border-radius: 15px;
+    color: rgb(30,30,30);
+    cursor: default;
+    background-color: whitesmoke;
+    font-weight: 500;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s;
+    margin-top: 1.5vh;
+    margin-left: 1.5vh;
+    float: left;
+}
 .Extention-btn:focus {
     outline:none
 }

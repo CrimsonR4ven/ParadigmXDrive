@@ -1,5 +1,6 @@
-﻿import { useEffect, useState } from 'react';
-import {Link, useSearch} from "wouter";
+﻿import { useEffect, useState} from 'react';
+import { Link, useSearch } from "wouter";
+import { useGlobalState } from "./GlobalState";
 import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
 import dokumenten from './assets/icons9-document-512.png'
@@ -7,8 +8,28 @@ import downloaden from './assets/icons8-download-96.png'
 import './App.css';
 import './inputStyle.css';
 
-function RenameWindow({ path, handleRenameCloseRef }) {
+async function RenameFile(path, newName) {
 
+    await fetch("/File/UpdateFileName?path=" + path + "&newName=" + newName, {
+        method: 'PATCH'
+    });
+    return 200;
+}
+
+
+function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
+    var extention = "." + path.split("\\").at(-1).split(".")[1];
+    const [inputValue, setInputValue] = useState(
+        path.split("\\").at(-1).split(".")[0]
+    );
+
+    const handleSave = async () => {
+        var response = await RenameFile(path, inputValue);
+        if (response == 200) {
+            handleSuccess(inputValue + extention);
+        }
+        handleRenameCloseRef();
+    }
     return (
         <>
             <div onClick={handleRenameCloseRef}  style={{
@@ -20,16 +41,15 @@ function RenameWindow({ path, handleRenameCloseRef }) {
                 backgroundColor: "rgba(0,0,0,0.7)",
                 zIndex: 1003
             }}>
-                {path}
             </div>
             <div
                 style={{
                     position: "fixed",
-                    top: "45vh",
+                    top: "44vh",
                     left: "40vw",
                     width: "20vw",
-                    height: "10vh",
-                    padding: "2vh 2vw",
+                    height: "12vh",
+                    padding: "0 2vw 4.5vh 2vw",
                     backgroundColor: "rgb(30,30,30)",
                     zIndex: 1004,
                     borderRadius: "16px",
@@ -38,18 +58,26 @@ function RenameWindow({ path, handleRenameCloseRef }) {
                     textAlign: "center",
                 }}
             >
+                <p style={{ color: "whitesmoke" }}>Change file name:</p>
                 <div className="input-wrapper">
-                    <input type="text" name="text" className="input" defaultValue={path.split('\\').at(-1).split('.')[0]} />
+                    <input type="text" name="text" className="input" onChange={e => setInputValue(e.target.value)} value={inputValue}/>
                     <button className="Extention-btn">
-                        {"." + path.split('\\').at(-1).split('.')[1]}
+                        {extention}
                     </button>
                 </div>
+                <button className="Save-btn" onClick={() => handleSave() }>
+                    Save
+                </button>
+                <button className="Cancel-btn" onClick={handleRenameCloseRef}>
+                    Cancel
+                </button>
             </div>
         </>
     )}
 
-function FilePreview({ image, path, onDivClick, type }) {
+function FilePreview({ image, path, onDivClick, type, handleFileChangingAction}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
+    const [fileName, setFileName] = useState(path.split('\\').at(-1));
 
     const handleRenameOpen = () => {
         setIsRenameOpen(true);
@@ -57,6 +85,12 @@ function FilePreview({ image, path, onDivClick, type }) {
 
     const handleRenameClose = () => {
         setIsRenameOpen(false);
+    }
+
+    const handleChangeNameSuccess = newName => {
+        setFileName(newName);
+        console.log("state: " + fileName + " var: " + newName);
+        handleFileChangingAction();
     }
 
     const handleFileDownload = () => {
@@ -102,7 +136,7 @@ function FilePreview({ image, path, onDivClick, type }) {
             boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
         }}>
             <img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />
-            <p style={{ color: "white" }} onClick={() => handleRenameOpen()}>{path.split('\\').at(-1)}</p>
+            <p style={{ color: "white" }} onClick={() => handleRenameOpen()}>{fileName}</p>
             <img src={downloaden} alt="folder" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => handleFileDownload()} />
         </div>
     </div>
@@ -121,7 +155,7 @@ function FilePreview({ image, path, onDivClick, type }) {
                 zIndex: 1000,
             }}
         >
-            {type == "Image" && (<img className="previewImage" src={image} alt="file" style={{ height: "85%" }} />)}
+            {type == "Image" && (<img className="previewImage" src={image} alt="file" style={{ height: "85%", zIndex: 1002 }} />)}
         </div>
 
         {type == "Unknown" && (<div
@@ -179,7 +213,7 @@ function FilePreview({ image, path, onDivClick, type }) {
         >
         </div>)}
 
-        {isRenameOpen && (<RenameWindow path={path} handleRenameCloseRef={() => handleRenameClose()}></RenameWindow>)}
+        {isRenameOpen && (<RenameWindow path={path} handleRenameCloseRef={() => handleRenameClose()} handleSuccess={ newName => handleChangeNameSuccess(newName) }></RenameWindow>)}
     </>)
 }
 
@@ -188,11 +222,23 @@ function DriveFolderView() {
     const [currentFilePreview, setCurrentFilePreview] = useState(null);
     const [currentFileName, setCurrentFileName] = useState("");
     const [currentFileType, setCurrentFileType] = useState("");
-
+    const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
     const actualFolder = folderPath ? decodeURIComponent(folderPath) : "\\Cool Art";
-    const [folders, setFolders] = useState();
+
+    async function populateWeatherData(folder) {
+        const response = await fetch('/File/GetFolderData?folder=' + folder);
+        if (response.ok) {
+            return await response.json();
+        }
+    }
+
+    const handleFileChanged = async () => {
+        const data = await populateWeatherData(actualFolder);
+        console.log(data + " " + actualFolder);
+        setFolders(data);
+    }
 
     const handleOpen = (file) => {
         switch (file.split('.').at(-1))
@@ -204,6 +250,9 @@ function DriveFolderView() {
             case "gif":
             case "ico":
                 setCurrentFileType("Image");
+                break;
+            case "txt":
+                setCurrentFileType("Text");
                 break;
             default:
                 setCurrentFileType("Unknown");
@@ -227,16 +276,13 @@ function DriveFolderView() {
     };
 
     useEffect(() => {
-        async function populateWeatherData(folder) {
-            console.log("Location:", location, "actualFolder:", actualFolder);
-            const response = await fetch('/File/GetFolderData?folder=' + folder);
-            if (response.ok) {
-                const data = await response.json();
-                setFolders(data);
-            }
+        async function loadData() {
+            const data = await populateWeatherData(actualFolder);
+            console.log(data + " " + actualFolder);
+            setFolders(data);
         }
-        populateWeatherData(actualFolder);
-    }, [location, actualFolder]);
+        loadData();
+    }, [actualFolder]);
 
     if (!folders) {
         return <p>Loading {actualFolder}...</p>;
@@ -269,9 +315,9 @@ function DriveFolderView() {
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview path={actualFolder + currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} ></FilePreview>)
+            {isOpen && (<FilePreview path={actualFolder + currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
             }
-        </div>
+            </div>
     );
 }
 
