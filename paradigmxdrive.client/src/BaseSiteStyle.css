@@ -1,0 +1,63 @@
+body
+{
+    background-color: rgb(240,240,240);
+    margin: 0;
+}
+
+.Logo 
+{
+    height: 5vh;
+    width: 9vw;
+    float: left;
+}
+
+.TopNavContainer {
+    height: 5vh;
+    width: 90vw;
+    float: left;
+    display: flex;
+    gap: 10px;
+}
+
+    .TopNavContainer a {
+        display: block;
+        text-align: center;
+        height: 5vh;
+        width: 5vh;
+        background-color: rgb(240,240,240);
+        float: left;
+    }
+
+    .TopNavContainer a.active{
+        background-color: white;
+        border-radius:16px 16px 0px 0px;
+    }
+    .TopNavContainer div {
+        height: 5vh;
+        width: 5vh;
+        position: relative;
+    }
+        .TopNavContainer div.active::after {
+            content: "";
+            position: absolute; /* remove from flow */
+            top:5vh; 
+            left: 0%;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+        }
+
+.SideNavContainer {
+    float: left;
+    height: 90vh;
+    width: 9vw;
+}
+
+.ContentBox {
+    background-color: white;
+    border-radius: 16px;
+    height: 90vh;
+    width: 88vw;
+    float: left;
+    padding: 1vh 1vw;
+}

@@ -1,6 +1,9 @@
 ﻿#root {
-    margin-left: 10vw;
     text-align: left;
+}
+
+body {
+    overflow: hidden;
 }
 
 th, td {
@@ -84,4 +87,8 @@ h1{
     width: 90vw;
     display:flex;
     flex-wrap:wrap;
+}
+.scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
