@@ -14,7 +14,7 @@ function App()
         <div className="Logo">
         </div>
         <div className="TopNavContainer">
-            <div className={`${location === "/" ? "active" : ""}`}><Link href="/" className={`${location === "/" ? "active" : ""}`}>x</Link></div>
+            <div className={`${location == "/" || location == "/folder" ? "active" : ""}`}><Link href="/" className={`${location === "/" || location == "/folder" ? "active" : ""}`}>x</Link></div>
             <div className={`${location === "/sa" ? "active" : ""}`}><Link href="/sa" className={`${location === "/sa" ? "active" : ""}`}>y</Link></div>
             <div className={`${location === "/as" ? "active" : ""}`}><Link href="/as" className={`${location === "/as" ? "active" : ""}`}>z</Link></div >
         </div>
