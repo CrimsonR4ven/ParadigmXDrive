@@ -18,8 +18,8 @@ namespace ParadigmXDrive.Server.Controllers
         public FileController(ILogger<FileController> logger)
         {
             _logger = logger;
-            folderstruct = new FolderStructure("\\media\\pi\\Extreme SSD");
-            Console.WriteLine(folderstruct.GetFolder("\\Cool Art"));
+            folderstruct = new FolderStructure("~/media/pi/Extreme SSD");
+            Console.WriteLine(folderstruct.GetFolder("/Cool Art"));
         }
 
         [HttpGet("GetFolderData")]
@@ -56,7 +56,7 @@ namespace ParadigmXDrive.Server.Controllers
         {
             Console.WriteLine($"org path: {path} new name: {newName}");
             var fullPath = folderstruct.GetImageFile(path);
-            System.IO.File.Move(fullPath, Path.GetDirectoryName(fullPath) + "\\" + newName + Path.GetExtension(fullPath));
+            System.IO.File.Move(fullPath, Path.GetDirectoryName(fullPath) + "/" + newName + Path.GetExtension(fullPath));
             return Ok();
         }
     }

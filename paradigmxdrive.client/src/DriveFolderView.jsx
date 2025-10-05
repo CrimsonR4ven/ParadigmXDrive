@@ -18,9 +18,9 @@ async function RenameFile(path, newName) {
 
 
 function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
-    var extention = "." + path.split("\\").at(-1).split(".")[1];
+    var extention = "." + path.split("/").at(-1).split(".")[1];
     const [inputValue, setInputValue] = useState(
-        path.split("\\").at(-1).split(".")[0]
+        path.split("/").at(-1).split(".")[0]
     );
 
     const handleSave = async () => {
@@ -77,7 +77,7 @@ function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
 
 function FilePreview({ image, path, onDivClick, type, handleFileChangingAction}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
-    const [fileName, setFileName] = useState(path.split('\\').at(-1));
+    const [fileName, setFileName] = useState(path.split('/').at(-1));
 
     const handleRenameOpen = () => {
         setIsRenameOpen(true);
@@ -101,7 +101,7 @@ function FilePreview({ image, path, onDivClick, type, handleFileChangingAction})
 
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = path.split("\\").at(-1);
+                a.download = path.split("/").at(-1);
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
@@ -225,7 +225,7 @@ function DriveFolderView() {
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
-    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "\\Cool Art";
+    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/Cool Art";
 
     async function populateWeatherData(folder) {
         const response = await fetch('/File/GetFolderData?folder=' + folder);

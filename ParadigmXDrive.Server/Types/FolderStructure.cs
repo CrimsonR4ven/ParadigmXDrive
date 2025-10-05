@@ -10,14 +10,14 @@ namespace ParadigmXDrive.Server.Types
 
         public FolderStructure(string driveFolderPath)
         {
-            var indexOfLastSeparator = driveFolderPath.LastIndexOf('\\');
+            var indexOfLastSeparator = driveFolderPath.LastIndexOf('/');
             BasePath = driveFolderPath[..indexOfLastSeparator];
             BaseFolder = new Folder(driveFolderPath[indexOfLastSeparator..], false, null, null);
         }
 
         public string? GetFolder(string folderPath)
         {
-            var folderPathTab = folderPath[1..].Split('\\').Select(s => '\\' + s).ToList();
+            var folderPathTab = folderPath[1..].Split('/').Select(s => '/' + s).ToList();
             if (folderPathTab[0] != BaseFolder.folderData.Name) return null;
             return BaseFolder.GetJson(folderPathTab);
         }
