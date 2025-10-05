@@ -18,7 +18,7 @@ namespace ParadigmXDrive.Server.Controllers
         public FileController(ILogger<FileController> logger)
         {
             _logger = logger;
-            folderstruct = new FolderStructure("E:\\Cool Art");
+            folderstruct = new FolderStructure("\\media\\pi\\Extreme SSD");
             Console.WriteLine(folderstruct.GetFolder("\\Cool Art"));
         }
 
