@@ -29,7 +29,7 @@ namespace ParadigmXDrive.Server.Models
             Populate(FolderStructure.BasePath + Path);
             foreach (var dir in Directory.GetDirectories(FolderStructure.BasePath + Path))
             {
-                Next.Add(new Folder(dir[dir.LastIndexOf('\\')..], false, null, this));
+                Next.Add(new Folder(dir[dir.LastIndexOf('/')..], false, null, this));
             }
         }
 
@@ -39,7 +39,7 @@ namespace ParadigmXDrive.Server.Models
 
             foreach (string file in files)
             {
-                FileList.Add(new FileDto(file[file.LastIndexOf('\\')..]));
+                FileList.Add(new FileDto(file[file.LastIndexOf('/')..]));
             }
         }
 
