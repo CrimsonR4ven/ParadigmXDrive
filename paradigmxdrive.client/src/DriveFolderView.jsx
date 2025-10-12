@@ -225,7 +225,7 @@ function DriveFolderView() {
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
-    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/Extreme SSD";
+    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/Cool Art";
 
     async function populateWeatherData(folder) {
         const response = await fetch('/File/GetFolderData?folder=' + folder);

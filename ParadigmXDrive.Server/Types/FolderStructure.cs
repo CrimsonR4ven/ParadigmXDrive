@@ -4,22 +4,21 @@ namespace ParadigmXDrive.Server.Types
 {
     public class FolderStructure
     {
-        public static string BasePath;
-
-        public Folder BaseFolder;
+        public string BasePath;
+        public Folder CurrFolder;
 
         public FolderStructure(string driveFolderPath)
         {
             var indexOfLastSeparator = driveFolderPath.LastIndexOf('/');
             BasePath = driveFolderPath[..indexOfLastSeparator];
-            BaseFolder = new Folder(driveFolderPath[indexOfLastSeparator..], false, null, null);
+            CurrFolder = new Folder(driveFolderPath[indexOfLastSeparator..], false, null, null);
         }
 
         public string? GetFolder(string folderPath)
         {
             var folderPathTab = folderPath[1..].Split('/').Select(s => '/' + s).ToList();
             if (folderPathTab[0] != BaseFolder.folderData.Name) return null;
-            return BaseFolder.GetJson(folderPathTab);
+            return CurrFolder.GetJson(folderPathTab);
         }
 
         public string GetImageFile(string folderPath)
@@ -30,7 +29,12 @@ namespace ParadigmXDrive.Server.Types
 
         public void ShowStructure()
         {
-            BaseFolder?.Show(0);
+            CurrFolder?.Show(0);
+        }
+
+        public void TryLoadSubfolder()
+        {
+            
         }
     }
 }

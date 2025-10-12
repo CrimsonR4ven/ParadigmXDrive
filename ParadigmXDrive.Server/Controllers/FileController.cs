@@ -18,14 +18,14 @@ namespace ParadigmXDrive.Server.Controllers
         public FileController(ILogger<FileController> logger)
         {
             _logger = logger;
-            folderstruct = new FolderStructure(Path.GetPathRoot("/") + "media/pi/Extreme SSD");
-            Console.WriteLine(folderstruct.GetFolder("/Extreme SSD/Cool Art"));
+            folderstruct = new FolderStructure(Path.GetPathRoot("/") + "media/pi/Extreme SSD/Cool Art");
+            Console.WriteLine(folderstruct.GetFolder("/Cool Art"));
         }
 
         [HttpGet("GetFolderData")]
         public async Task<IActionResult> GetFolderData(string folder)
         {
-            var resp = folderstruct.GetFolder(folder);
+            var resp = await Task.Run(() =>folderstruct.GetFolder(folder));
             if (resp == null)
             {
                 return NotFound();
