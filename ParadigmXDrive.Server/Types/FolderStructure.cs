@@ -16,8 +16,9 @@ namespace ParadigmXDrive.Server.Types
 
         public string? GetFolder(string folderPath)
         {
+            if (!folderPath.Contains(BasePath)) return null;
             var folderPathTab = folderPath[1..].Split('/').Select(s => '/' + s).ToList();
-            if (folderPathTab[0] != BaseFolder.folderData.Name) return null;
+            if (folderPathTab[0] != CurrFolder.folderData.Name) return null;
             return CurrFolder.GetJson(folderPathTab);
         }
 
@@ -27,12 +28,7 @@ namespace ParadigmXDrive.Server.Types
             return filePath;
         }
 
-        public void ShowStructure()
-        {
-            CurrFolder?.Show(0);
-        }
-
-        public void TryLoadSubfolder()
+        public void TryLoadSubfolder(string subFolderName)
         {
             
         }

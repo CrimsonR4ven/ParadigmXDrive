@@ -9,27 +9,25 @@ namespace ParadigmXDrive.Server.Models
         public DateTime Created;
         public bool IsPublic;
 
-        public List<Folder> Next;
+        public List<String> Subfolders;
         public List<FileDto> FileList;
 
-        public Folder? Prev;
+        public string Path;
 
-        public string Path => Prev != null ? Prev.Path + folderData.Name : folderData.Name;
-
-        public Folder(string name, bool isPublic, string? description, Folder? prev)
+        public Folder(string name, bool isPublic, string? description, string path)
         {
             folderData = new FolderDto(name, description);
             IsPublic = isPublic;
 
-            Next = new List<Folder>();
+            Subfolders = new List<string>();
             FileList = new List<FileDto>();
 
-            Prev = prev;
+            Path = path;
 
-            Populate(FolderStructure.BasePath + Path);
-            foreach (var dir in Directory.GetDirectories(FolderStructure.BasePath + Path))
+            Populate(Path);
+            foreach (var dir in Directory.GetDirectories(Path))
             {
-                Next.Add(new Folder(dir[dir.LastIndexOf('/')..], false, null, this));
+                Subfolders.Add(dir[dir.LastIndexOf('/')..]);
             }
         }
 
@@ -43,39 +41,13 @@ namespace ParadigmXDrive.Server.Models
             }
         }
 
-        public void Show(int indent)
-        {
-            for (int i = 0; i < indent; i++)
-            {
-                Console.Write(" ");
-            }
-            Console.Write($"{folderData.Name}\n");
-            foreach (var folder in Next)
-            {
-                folder.Show(indent + 1);
-            }
-            foreach (var file in FileList)
-            {
-                for (int i = 0; i < indent + 1; i++)
-                {
-                    Console.Write(" ");
-                }
-                Console.Write($"{file.Name[1..]}\n");
-            }
-        }
-
         public string? GetJson(List<string> folderPath)
         {
             string? json;
             if (folderPath.Count == 1)
             {
                 json = "{ \"Subfolders\": ";
-                var subfolderList = new List<FolderDto>();
-                foreach (var subfolder in Next)
-                {
-                    subfolderList.Add(subfolder.folderData);
-                }
-                json += JsonSerializer.Serialize(subfolderList);
+                json += JsonSerializer.Serialize(Subfolders);
                 json += ", \"Files\": ";
                 json += JsonSerializer.Serialize(FileList);
                 json += "}";
@@ -84,7 +56,7 @@ namespace ParadigmXDrive.Server.Models
             else
             {
                 folderPath.RemoveAt(0);
-                foreach (var folder in Next)
+                foreach (var folder in Subfolders)
                 {
                     if (folder.folderData.Name == folderPath[0])
                     {
