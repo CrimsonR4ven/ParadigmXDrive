@@ -9,8 +9,8 @@ namespace ParadigmXDrive.Server.Models
         public DateTime Created;
         public bool IsPublic;
 
-        public List<String> Subfolders;
-        public List<FileDto> FileList;
+        private List<String> subfolders;
+        private List<FileDto> fileList;
 
         public string Path;
 
@@ -19,53 +19,37 @@ namespace ParadigmXDrive.Server.Models
             folderData = new FolderDto(name, description);
             IsPublic = isPublic;
 
-            Subfolders = new List<string>();
-            FileList = new List<FileDto>();
+            subfolders = new List<string>();
+            fileList = new List<FileDto>();
 
             Path = path;
 
-            Populate(Path);
+            loadFilesAsObjects(Path);
             foreach (var dir in Directory.GetDirectories(Path))
             {
-                Subfolders.Add(dir[dir.LastIndexOf('/')..]);
+                subfolders.Add(dir[dir.LastIndexOf('/')..]);
             }
         }
 
-        private void Populate(string path)
+        private void loadFilesAsObjects(string path)
         {
             string[] files = Directory.GetFiles(path);
 
             foreach (string file in files)
             {
-                FileList.Add(new FileDto(file[file.LastIndexOf('/')..]));
+                fileList.Add(new FileDto(file[file.LastIndexOf('/')..]));
             }
         }
 
-        public string? GetJson(List<string> folderPath)
+        public string? GetJson()
         {
             string? json;
-            if (folderPath.Count == 1)
-            {
-                json = "{ \"Subfolders\": ";
-                json += JsonSerializer.Serialize(Subfolders);
-                json += ", \"Files\": ";
-                json += JsonSerializer.Serialize(FileList);
-                json += "}";
-                return json;
-            }
-            else
-            {
-                folderPath.RemoveAt(0);
-                foreach (var folder in Subfolders)
-                {
-                    if (folder.folderData.Name == folderPath[0])
-                    {
-                        return folder.GetJson(folderPath);
-                    }
-
-                }
-                return null;
-            }
+            json = "{ \"Subfolders\": ";
+            json += JsonSerializer.Serialize(subfolders);
+            json += ", \"Files\": ";
+            json += JsonSerializer.Serialize(fileList);
+            json += "}";
+            return json;
         }
     }
 }
