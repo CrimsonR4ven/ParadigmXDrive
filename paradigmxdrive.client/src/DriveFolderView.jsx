@@ -10,7 +10,7 @@ import './inputStyle.css';
 
 async function RenameFile(path, newName) {
 
-    await fetch("/File/UpdateFileName?path=" + path + "&newName=" + newName, {
+    await fetch("/File/UpdateFileName?filename=" + path + "&newName=" + newName, {
         method: 'PATCH'
     });
     return 200;
@@ -24,7 +24,7 @@ function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
     );
 
     const handleSave = async () => {
-        var response = await RenameFile(path, inputValue);
+        var response = await RenameFile(path.split("/").at(-1), inputValue);
         if (response == 200) {
             handleSuccess(inputValue + extention);
         }
@@ -94,7 +94,7 @@ function FilePreview({ image, path, onDivClick, type, handleFileChangingAction})
     }
 
     const handleFileDownload = () => {
-        fetch("/File/GetDownloadFile?path=" + path)
+        fetch("/File/GetDownloadFile?fileName=" + path.split("/").at(-1))
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
@@ -225,7 +225,7 @@ function DriveFolderView() {
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
-    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/Cool Art";
+    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD/Cool%20Art";
 
     async function populateWeatherData(folder) {
         const response = await fetch('/File/GetFolderData?folder=' + folder);
@@ -258,7 +258,7 @@ function DriveFolderView() {
                 setCurrentFileType("Unknown");
                 break;
         }
-        fetch("/File/GetImageFile?path=" + actualFolder + file)
+        fetch("/File/GetImageFile?path=" + file)
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
@@ -294,11 +294,11 @@ function DriveFolderView() {
             <div className="appcontainer">
                 {folders.Subfolders?.map((folder, i) => (
                     <Link
-                        href={`/folder?folder=${encodeURIComponent(actualFolder + folder.Name)}`}
+                        href={`/folder?folder=${encodeURIComponent(actualFolder + folder)}`}
                         key={i}
                         className="FolderButton"
                     >
-                        <div className="LinkHolder"><img src={folderenen} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />{folder.Name.replace("\\", "")}</div>
+                        <div className="LinkHolder"><img src={folderenen} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />{folder.replace("\\", "")}</div>
                         <div className="LinkPhoto"><img src={folderen} alt="folder" style={{ height: "85%" }} /></div>
 
                     </Link>

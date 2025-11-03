@@ -5,32 +5,32 @@ namespace ParadigmXDrive.Server.Types
     public class FolderStructure
     {
         public string BasePath;
-        public Folder CurrFolder;
+        private Folder currFolder;
 
         public FolderStructure(string driveFolderPath)
         {
-            var indexOfLastSeparator = driveFolderPath.LastIndexOf('/');
+            var indexOfLastSeparator = driveFolderPath.LastIndexOf(Path.DirectorySeparatorChar);
             BasePath = driveFolderPath[..indexOfLastSeparator];
-            CurrFolder = new Folder(driveFolderPath[indexOfLastSeparator..], false, null, null);
+            currFolder = new Folder(Path.GetDirectoryName(driveFolderPath), false, null, driveFolderPath);
         }
 
-        public string? GetFolder(string folderPath)
+        public string? GetFolderData(string folderPath /*, int senderID*/)
         {
-            if (!folderPath.Contains(BasePath)) return null;
-            var folderPathTab = folderPath[1..].Split('/').Select(s => '/' + s).ToList();
-            if (folderPathTab[0] != CurrFolder.folderData.Name) return null;
-            return CurrFolder.GetJson(folderPathTab);
+            if (!Directory.Exists(folderPath)) return null;
+            if (currFolder.Path != folderPath) loadFolder(folderPath);
+            return currFolder.GetJson();
         }
-
-        public string GetImageFile(string folderPath)
+        
+        private void loadFolder(string newFolderPath /*, int senderID*/)
         {
-            var filePath = BasePath + folderPath;
-            return filePath;
+            // if (!newFolderPath.Contains(BasePath)) return null; TODO: Handle Access rights / AFTER LOG IN IS FINISHED
+            var folderName = Path.GetDirectoryName(newFolderPath);
+            currFolder = new Folder(folderName, false, null, newFolderPath);
         }
-
-        public void TryLoadSubfolder(string subFolderName)
+        
+        public string GetFilePath(string fileName)
         {
-            
+            return currFolder.Path + Path.DirectorySeparatorChar + fileName;
         }
     }
 }

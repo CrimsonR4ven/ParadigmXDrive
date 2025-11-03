@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using ParadigmXDrive.Server.Models;
 using ParadigmXDrive.Server.Types;
 using System.Net.WebSockets;
+using System.IO;
 
 namespace ParadigmXDrive.Server.Controllers
 {
@@ -12,20 +13,20 @@ namespace ParadigmXDrive.Server.Controllers
     public class FileController : ControllerBase
     {
         private FolderStructure folderstruct;
-        private string[] imageExtentions = { "jpg", "jpeg", "gif", "webp", "png", "ico" };
+        private string[] imageExtentions = ["jpg", "jpeg", "gif", "webp", "png", "ico"];
         private readonly ILogger<FileController> _logger;
 
         public FileController(ILogger<FileController> logger)
         {
             _logger = logger;
-            folderstruct = new FolderStructure(Path.GetPathRoot("/") + "media/pi/Extreme SSD/Cool Art");
-            Console.WriteLine(folderstruct.GetFolder("/Cool Art"));
+            folderstruct = new FolderStructure("/media/pi/Extreme SSD/Cool Art");
+            Console.WriteLine(folderstruct.GetFolderData("/media/pi/Extreme SSD/Cool Art"));
         }
 
         [HttpGet("GetFolderData")]
         public async Task<IActionResult> GetFolderData(string folder)
         {
-            var resp = await Task.Run(() =>folderstruct.GetFolder(folder));
+            var resp =  folderstruct.GetFolderData(folder);
             if (resp == null)
             {
                 return NotFound();
@@ -34,28 +35,27 @@ namespace ParadigmXDrive.Server.Controllers
         }
 
         [HttpGet("GetImageFile")]
-        public async Task<IActionResult> GetImageFile(string path)
+        public async Task<IActionResult> GetImageFile(string fileName)
         {
-            var fullPath = folderstruct.GetImageFile(path);
-            if (!imageExtentions.Contains(path.Split('.').Last())) return NotFound();
+            var fullPath = folderstruct.GetFilePath(fileName);
+            if (!imageExtentions.Contains(fileName.Split('.').Last())) return NotFound();
             byte[] imageBytes = System.IO.File.ReadAllBytes(fullPath);
             return File(imageBytes, "Image/png");
         }
 
         [HttpGet("GetDownloadFile")]
-        public async Task<IActionResult> GetDownloadFile(string path)
+        public async Task<IActionResult> GetDownloadFile(string fileName)
         {
-            var fullPath = folderstruct.GetImageFile(path);
-            var name = Path.GetFileName(fullPath);
+            var fullPath = folderstruct.GetFilePath(fileName);
             byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
-            return File(fileBytes, "Image/png", name);
+            return File(fileBytes, MimeMapping.MimeUtility.GetMimeMapping(fileName), fileName);
         }
 
         [HttpPatch("UpdateFileName")]
-        public async Task<IActionResult> UpdateFileName(string path, string newName)
+        public async Task<IActionResult> UpdateFileName(string fileName, string newName)
         {
-            Console.WriteLine($"org path: {path} new name: {newName}");
-            var fullPath = folderstruct.GetImageFile(path);
+            Console.WriteLine($"org name: {fileName} new name: {newName}");
+            var fullPath = folderstruct.GetFilePath(fileName);
             System.IO.File.Move(fullPath, Path.GetDirectoryName(fullPath) + "/" + newName + Path.GetExtension(fullPath));
             return Ok();
         }
