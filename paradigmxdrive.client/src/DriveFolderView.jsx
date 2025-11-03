@@ -10,7 +10,7 @@ import './inputStyle.css';
 
 async function RenameFile(path, newName) {
 
-    await fetch("/File/UpdateFileName?path=" + path + "&newName=" + newName, {
+    await fetch("/File/UpdateFileName?filename=" + path + "&newName=" + newName, {
         method: 'PATCH'
     });
     return 200;
@@ -24,7 +24,7 @@ function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
     );
 
     const handleSave = async () => {
-        var response = await RenameFile(path, inputValue);
+        var response = await RenameFile(path.split("/").at(-1), inputValue);
         if (response == 200) {
             handleSuccess(inputValue + extention);
         }
@@ -94,7 +94,7 @@ function FilePreview({ image, path, onDivClick, type, handleFileChangingAction})
     }
 
     const handleFileDownload = () => {
-        fetch("/File/GetDownloadFile?path=" + path)
+        fetch("/File/GetDownloadFile?fileName=" + path.split("/").at(-1))
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
@@ -258,7 +258,7 @@ function DriveFolderView() {
                 setCurrentFileType("Unknown");
                 break;
         }
-        fetch("/File/GetImageFile?path=" + actualFolder + file)
+        fetch("/File/GetImageFile?path=" + file)
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
