@@ -225,7 +225,7 @@ function DriveFolderView() {
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
-    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/Cool Art";
+    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD/Cool%20Art";
 
     async function populateWeatherData(folder) {
         const response = await fetch('/File/GetFolderData?folder=' + folder);
@@ -294,11 +294,11 @@ function DriveFolderView() {
             <div className="appcontainer">
                 {folders.Subfolders?.map((folder, i) => (
                     <Link
-                        href={`/folder?folder=${encodeURIComponent(actualFolder + folder.Name)}`}
+                        href={`/folder?folder=${encodeURIComponent(actualFolder + folder)}`}
                         key={i}
                         className="FolderButton"
                     >
-                        <div className="LinkHolder"><img src={folderenen} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />{folder.Name.replace("\\", "")}</div>
+                        <div className="LinkHolder"><img src={folderenen} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />{folder.replace("\\", "")}</div>
                         <div className="LinkPhoto"><img src={folderen} alt="folder" style={{ height: "85%" }} /></div>
 
                     </Link>
