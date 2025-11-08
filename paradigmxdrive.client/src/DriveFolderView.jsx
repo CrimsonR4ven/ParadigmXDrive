@@ -8,9 +8,9 @@ import downloaden from './assets/icons8-download-96.png'
 import './App.css';
 import './inputStyle.css';
 
-async function RenameFile(path, newName) {
+async function RenameFile(oldName, newName) {
 
-    await fetch("/File/UpdateFileName?filename=" + path + "&newName=" + newName, {
+    await fetch("/File/UpdateFileName?fileName=" + oldName + "&newName=" + newName, {
         method: 'PATCH'
     });
     return 200;
@@ -225,7 +225,7 @@ function DriveFolderView() {
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
-    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD/Cool%20Art";
+    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD";
 
     async function populateWeatherData(folder) {
         const response = await fetch('/File/GetFolderData?folder=' + folder);
@@ -258,7 +258,7 @@ function DriveFolderView() {
                 setCurrentFileType("Unknown");
                 break;
         }
-        fetch("/File/GetImageFile?path=" + file)
+        fetch("/File/GetImageFile?fileName=" + file)
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
@@ -298,7 +298,7 @@ function DriveFolderView() {
                         key={i}
                         className="FolderButton"
                     >
-                        <div className="LinkHolder"><img src={folderenen} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />{folder.replace("\\", "")}</div>
+                        <div className="LinkHolder"><img src={folderenen} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />{folder.replace("/", "")}</div>
                         <div className="LinkPhoto"><img src={folderen} alt="folder" style={{ height: "85%" }} /></div>
 
                     </Link>
@@ -310,7 +310,7 @@ function DriveFolderView() {
                         onClick={(e) => { e.preventDefault(); handleOpen(file.Name) }}
                         className="FileButton"
                     >
-                        <div className="LinkHolder" title={file.Name}><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("\\", "")}</p></div>
+                        <div className="LinkHolder" title={file.Name}><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("/", "")}</p></div>
                         <div className="LinkPhoto"><img src={dokumenten} alt="file" style={{ height: "85%" }} /></div>
                     </Link>
                 ))}

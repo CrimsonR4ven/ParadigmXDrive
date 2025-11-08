@@ -19,8 +19,8 @@ namespace ParadigmXDrive.Server.Controllers
         public FileController(ILogger<FileController> logger)
         {
             _logger = logger;
-            folderstruct = new FolderStructure("/media/pi/Extreme SSD/Cool Art");
-            Console.WriteLine(folderstruct.GetFolderData("/media/pi/Extreme SSD/Cool Art"));
+            folderstruct = new FolderStructure("/media/pi/Extreme SSD");
+            Console.WriteLine(folderstruct.GetFolderData("/media/pi/Extreme SSD"));
         }
 
         [HttpGet("GetFolderData")]
