@@ -30,7 +30,7 @@ namespace ParadigmXDrive.Server.Types
         
         public string GetFilePath(string fileName)
         {
-            return currFolder.Path + fileName;
+            return currFolder.Path + (fileName[0] != Path.DirectorySeparatorChar ? Path.DirectorySeparatorChar : "" )+ fileName;
         }
     }
 }
