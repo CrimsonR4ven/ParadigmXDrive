@@ -11,7 +11,7 @@ import './inputStyle.css';
 
 
 async function RenameFile(curPath, newName) {
-    let newPath = path.join(path.dirname(curPath), newName, path.extname(curPath));
+    let newPath = path.join(path.dirname(curPath), newName + path.extname(curPath));
     await fetch("/File/UpdateFilePath?filePath=" + curPath + "&newPath=" + newPath, {
         method: 'PATCH'
     });
@@ -255,7 +255,7 @@ function DriveFolderView() {
             case "gif":
             case "ico":
                 setCurrentFileType("Image");
-                fetch("/File/GetFileBlob?filePath=" + file)
+                fetch("/File/GetFileBlob?filePath=" + path.join(actualFolder, file))
                     .then(res => res.blob())
                     .then(blob => {
                         const url = URL.createObjectURL(blob);
