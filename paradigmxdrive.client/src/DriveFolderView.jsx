@@ -19,14 +19,15 @@ async function RenameFile(path, newName) {
 }
 
 
-function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
-    var extention = "." + path.split("/").at(-1).split(".")[1];
+function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
+    var extention = "." + curFilePath.split("/").at(-1).split(".")[1];
+    
     const [inputValue, setInputValue] = useState(
-        path.split("/").at(-1).split(".")[0]
+        curFilePath.split("/").at(-1).split(".")[0]
     );
 
     const handleSave = async () => {
-        var response = await RenameFile(path, inputValue);
+        var response = await RenameFile(curFilePath, inputValue);
         if (response == 200) {
             handleSuccess(inputValue + extention);
         }
@@ -77,9 +78,9 @@ function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
         </>
     )}
 
-function FilePreview({ image, path, onDivClick, type, handleFileChangingAction}) {
+function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingAction}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
-    const [fileName, setFileName] = useState(path.split('/').at(-1));
+    const [fileName, setFileName] = useState(curFilePath.split('/').at(-1));
 
     const handleRenameOpen = () => {
         setIsRenameOpen(true);
@@ -96,21 +97,23 @@ function FilePreview({ image, path, onDivClick, type, handleFileChangingAction})
     }
 
     const handleFileDownload = () => {
-        fetch("/File/GetFileBlob?filePath=" + path)
+        fetch("/File/GetFileBlob?filePath=" + curFilePath)
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
 
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = path.split("/").at(-1);
+                a.download = curFilePath.split("/").at(-1);
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
             });
     }
 
-    return (<><div style={{
+    return (
+        <>
+        <div style={{
         position: "fixed",
         top: "0vh",
         left: 0,
@@ -215,7 +218,7 @@ function FilePreview({ image, path, onDivClick, type, handleFileChangingAction})
         >
         </div>)}
 
-        {isRenameOpen && (<RenameWindow path={path} handleRenameCloseRef={() => handleRenameClose()} handleSuccess={ newName => handleChangeNameSuccess(newName) }></RenameWindow>)}
+        {isRenameOpen && (<RenameWindow curFilePath={curFilePath} handleRenameCloseRef={() => handleRenameClose()} handleSuccess={newName => handleChangeNameSuccess(newName) }></RenameWindow>)}
     </>)
 }
 
@@ -242,7 +245,7 @@ function DriveFolderView() {
         setFolders(data);
     }
 
-    const handleOpen = (file) => {
+    const handlePreviewOpen = (file) => {
         switch (file.split('.').at(-1))
         {
             case "jpg":
@@ -272,7 +275,7 @@ function DriveFolderView() {
         setIsOpen(true);
     };
 
-    const handleClose = () => {
+    const handlePreviewClose = () => {
         setCurrentFilePreview(null);
         setCurrentFileName("");
         setCurrentFileType("");
@@ -311,7 +314,7 @@ function DriveFolderView() {
                 {folders.Files?.map((file, i) => (
                     <Link
                         key={`file-${i}`}
-                        onClick={(e) => { e.preventDefault(); handleOpen(file.Name) }}
+                        onClick={(e) => { e.preventDefault(); handlePreviewOpen(file.Name) }}
                         className="FileButton"
                     >
                         <div className="LinkHolder" title={file.Name}><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("/", "")}</p></div>
@@ -319,7 +322,7 @@ function DriveFolderView() {
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview path={actualFolder + currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
+            {isOpen && (<FilePreview curFilePath={actualFolder + currentFileName} onDivClick={() => handlePreviewClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
             }
             </div>
     );

@@ -23,11 +23,11 @@ namespace ParadigmXDrive.Server.Controllers
         }
 
         [HttpGet("GetFolderData")]
-        public async Task<IActionResult> GetFolderData(string folder)
+        public async Task<IActionResult> GetFolderData(string folderPath)
         {
-            if (!Directory.Exists(folder)) return NotFound();
-            var folderName = Path.GetDirectoryName(folder); 
-            var resp = new Folder(folderName, false, null, folder).GetJson();
+            if (!Directory.Exists(folderPath)) return NotFound();
+            var folderName = Path.GetDirectoryName(folderPath); 
+            var resp = new Folder(folderName, false, null, folderPath).GetJson();
             return Ok(resp);
         }
 
