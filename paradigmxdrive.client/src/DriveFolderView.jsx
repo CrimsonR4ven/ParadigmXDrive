@@ -255,6 +255,12 @@ function DriveFolderView() {
             case "gif":
             case "ico":
                 setCurrentFileType("Image");
+                fetch("/File/GetFileBlob?filePath=" + file)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const url = URL.createObjectURL(blob);
+                        setCurrentFilePreview(url);
+                    });
                 break;
             case "txt":
                 setCurrentFileType("Text");
@@ -262,14 +268,6 @@ function DriveFolderView() {
             default:
                 setCurrentFileType("Unknown");
                 break;
-        }
-        if(currentFileType == "Image") {
-            fetch("/File/GetFileBlob?filePath=" + file)
-                .then(res => res.blob())
-                .then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    setCurrentFilePreview(url);
-                });
         }
         setCurrentFileName(file);
         setIsOpen(true);
