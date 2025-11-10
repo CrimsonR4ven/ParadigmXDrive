@@ -5,14 +5,14 @@ import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
 import dokumenten from './assets/icons9-document-512.png'
 import downloaden from './assets/icons8-download-96.png'
-import path from "path";
+import path from "path-browserify";
 import './App.css';
 import './inputStyle.css';
 
 
-async function RenameFile(path, newName) {
-    var newPath = path.join(path.dirname(path), newName, path.extname(path));
-    await fetch("/File/UpdateFilePath?filePath=" + path + "&newPath=" + newPath, {
+async function RenameFile(curPath, newName) {
+    let newPath = path.join(path.dirname(curPath), newName, path.extname(curPath));
+    await fetch("/File/UpdateFilePath?filePath=" + curPath + "&newPath=" + newPath, {
         method: 'PATCH'
     });
     return 200;
@@ -20,14 +20,14 @@ async function RenameFile(path, newName) {
 
 
 function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
-    var extention = "." + curFilePath.split("/").at(-1).split(".")[1];
+    let extention = path.extname(curFilePath);
     
     const [inputValue, setInputValue] = useState(
-        curFilePath.split("/").at(-1).split(".")[0]
+        path.basename(curFilePath, extention)
     );
 
     const handleSave = async () => {
-        var response = await RenameFile(curFilePath, inputValue);
+        let response = await RenameFile(curFilePath, inputValue);
         if (response == 200) {
             handleSuccess(inputValue + extention);
         }
@@ -275,7 +275,7 @@ function DriveFolderView() {
         setIsOpen(true);
     };
 
-    const handlePreviewClose = () => {
+    const handleClose = () => {
         setCurrentFilePreview(null);
         setCurrentFileName("");
         setCurrentFileType("");
@@ -314,7 +314,7 @@ function DriveFolderView() {
                 {folders.Files?.map((file, i) => (
                     <Link
                         key={`file-${i}`}
-                        onClick={(e) => { e.preventDefault(); handlePreviewOpen(file.Name) }}
+                        onClick={(e) => { e.preventDefault(); handleOpen(file.Name) }}
                         className="FileButton"
                     >
                         <div className="LinkHolder" title={file.Name}><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("/", "")}</p></div>
@@ -322,7 +322,7 @@ function DriveFolderView() {
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview curFilePath={actualFolder + currentFileName} onDivClick={() => handlePreviewClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
+            {isOpen && (<FilePreview path={actualFolder + currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
             }
             </div>
     );
