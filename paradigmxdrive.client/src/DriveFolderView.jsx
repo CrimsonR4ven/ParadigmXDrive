@@ -275,7 +275,7 @@ function DriveFolderView() {
         setIsOpen(true);
     };
 
-    const handleClose = () => {
+    const handlePreviewClose = () => {
         setCurrentFilePreview(null);
         setCurrentFileName("");
         setCurrentFileType("");
@@ -314,7 +314,7 @@ function DriveFolderView() {
                 {folders.Files?.map((file, i) => (
                     <Link
                         key={`file-${i}`}
-                        onClick={(e) => { e.preventDefault(); handleOpen(file.Name) }}
+                        onClick={(e) => { e.preventDefault(); handlePreviewOpen(file.Name) }}
                         className="FileButton"
                     >
                         <div className="LinkHolder" title={file.Name}><img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} /><p>{file.Name.replace("/", "")}</p></div>
@@ -322,7 +322,7 @@ function DriveFolderView() {
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview path={actualFolder + currentFileName} onDivClick={() => handleClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
+            {isOpen && (<FilePreview curFilePath={actualFolder + currentFileName} onDivClick={() => handlePreviewClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
             }
             </div>
     );
