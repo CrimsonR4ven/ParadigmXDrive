@@ -5,12 +5,14 @@ import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
 import dokumenten from './assets/icons9-document-512.png'
 import downloaden from './assets/icons8-download-96.png'
+import path from "path";
 import './App.css';
 import './inputStyle.css';
 
-async function RenameFile(oldName, newName) {
 
-    await fetch("/File/UpdateFileName?fileName=" + oldName + "&newName=" + newName, {
+async function RenameFile(path, newName) {
+    var newPath = path.join(path.dirname(path), newName, path.extname(path));
+    await fetch("/File/UpdateFilePath?filePath=" + path + "&newPath=" + newPath, {
         method: 'PATCH'
     });
     return 200;
@@ -24,7 +26,7 @@ function RenameWindow({ path, handleRenameCloseRef, handleSuccess }) {
     );
 
     const handleSave = async () => {
-        var response = await RenameFile(path.split("/").at(-1), inputValue);
+        var response = await RenameFile(path, inputValue);
         if (response == 200) {
             handleSuccess(inputValue + extention);
         }
@@ -94,7 +96,7 @@ function FilePreview({ image, path, onDivClick, type, handleFileChangingAction})
     }
 
     const handleFileDownload = () => {
-        fetch("/File/GetDownloadFile?fileName=" + path.split("/").at(-1))
+        fetch("/File/GetFileBlob?filePath=" + path)
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
@@ -258,12 +260,14 @@ function DriveFolderView() {
                 setCurrentFileType("Unknown");
                 break;
         }
-        fetch("/File/GetImageFile?fileName=" + file)
-            .then(res => res.blob())
-            .then(blob => {
-                const url = URL.createObjectURL(blob);
-                setCurrentFilePreview(url);
-            });
+        if(currentFileType == "Image") {
+            fetch("/File/GetFileBlob?filePath=" + file)
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    setCurrentFilePreview(url);
+                });
+        }
         setCurrentFileName(file);
         setIsOpen(true);
     };

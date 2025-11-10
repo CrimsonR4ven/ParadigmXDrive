@@ -20,43 +20,28 @@ namespace ParadigmXDrive.Server.Controllers
         {
             _logger = logger;
             folderstruct = new FolderStructure("/media/pi/Extreme SSD");
-            Console.WriteLine(folderstruct.GetFolderData("/media/pi/Extreme SSD"));
         }
 
         [HttpGet("GetFolderData")]
         public async Task<IActionResult> GetFolderData(string folder)
         {
-            var resp =  folderstruct.GetFolderData(folder);
-            if (resp == null)
-            {
-                return NotFound();
-            }
+            if (!Directory.Exists(folder)) return NotFound();
+            var folderName = Path.GetDirectoryName(folder); 
+            var resp = new Folder(folderName, false, null, folder).GetJson();
             return Ok(resp);
         }
 
-        [HttpGet("GetImageFile")]
-        public async Task<IActionResult> GetImageFile(string fileName)
+        [HttpGet("GetFileBlob")]
+        public async Task<IActionResult> GetDownloadFile(string filePath)
         {
-            var fullPath = folderstruct.GetFilePath(fileName);
-            if (!imageExtentions.Contains(fileName.Split('.').Last())) return NotFound();
-            byte[] imageBytes = System.IO.File.ReadAllBytes(fullPath);
-            return File(imageBytes, "Image/png");
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            return File(fileBytes, MimeMapping.MimeUtility.GetMimeMapping(filePath), Path.GetFileName(filePath));
         }
 
-        [HttpGet("GetDownloadFile")]
-        public async Task<IActionResult> GetDownloadFile(string fileName)
+        [HttpPatch("UpdateFilePath")]
+        public async Task<IActionResult> UpdateFileName(string filePath, string newPath)
         {
-            var fullPath = folderstruct.GetFilePath(fileName);
-            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
-            return File(fileBytes, MimeMapping.MimeUtility.GetMimeMapping(fileName), fileName);
-        }
-
-        [HttpPatch("UpdateFileName")]
-        public async Task<IActionResult> UpdateFileName(string fileName, string newName)
-        {
-            Console.WriteLine($"org name: {fileName} new name: {newName}");
-            var fullPath = folderstruct.GetFilePath(fileName);
-            System.IO.File.Move(fullPath, Path.GetDirectoryName(fullPath) + "/" + newName + Path.GetExtension(fullPath));
+            System.IO.File.Move(filePath, newPath);
             return Ok();
         }
     }
