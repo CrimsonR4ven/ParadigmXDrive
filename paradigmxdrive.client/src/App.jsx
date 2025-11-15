@@ -1,8 +1,9 @@
 ﻿import { Link, Route, Switch, useLocation } from "wouter";
 import { useState } from "react";
 import DriveFolderView from './DriveFolderView.jsx'
-import './App.css';
-import './BaseSiteStyle.css'
+import ErrorView from './ErrorView.jsx'
+import './style/App.css';
+import './style/BaseSiteStyle.css'
 import { GlobalStateContext } from "./GlobalState";
 
 function App()
@@ -25,6 +26,8 @@ function App()
             <Switch>
                 <Route path="/" component={DriveFolderView} />
                 <Route path="/folder" component={DriveFolderView} />
+                <Route path="/error" component={ErrorView} />
+                <Route path="/error/:errcode">params => <ErrorView errcode={params.errcode}/></Route>
             </Switch>
             </GlobalStateContext.Provider>
         </div>

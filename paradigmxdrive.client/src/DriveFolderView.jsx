@@ -1,19 +1,27 @@
 ﻿import { useEffect, useState} from 'react';
 import { Link, useSearch } from "wouter";
 import { useGlobalState } from "./GlobalState";
+import { useErrorHandlerCritical, useErrorHandlerResource } from "./ErrorHandlers.jsx";
 import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
 import dokumenten from './assets/icons9-document-512.png'
 import downloaden from './assets/icons8-download-96.png'
 import path from "path-browserify";
-import './App.css';
-import './inputStyle.css';
+import './style/App.css';
+import './style/inputStyle.css';
 
 
 async function RenameFile(curPath, newName) {
+    let errHandler = useErrorHandlerResource();
     let newPath = path.join(path.dirname(curPath), newName + path.extname(curPath));
     await fetch("/File/UpdateFilePath?filePath=" + curPath + "&newPath=" + newPath, {
         method: 'PATCH'
+    }).then(res => 
+    {
+        if (!res.ok) {
+            errHandler(res.status);
+            return res.status;
+        }
     });
     return 200;
 }
@@ -81,7 +89,8 @@ function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
 function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingAction}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
     const [fileName, setFileName] = useState(curFilePath.split('/').at(-1));
-
+    let errHandler = useErrorHandlerResource();
+    
     const handleRenameOpen = () => {
         setIsRenameOpen(true);
     }
