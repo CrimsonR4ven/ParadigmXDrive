@@ -55,9 +55,9 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/File': {
+            '/api': {
                 target,
-                secure: false
+                changeOrigin: true
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '50802'),

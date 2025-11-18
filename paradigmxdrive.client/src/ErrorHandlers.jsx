@@ -1,11 +1,9 @@
 import {useLocation} from "wouter";
 import './style/ErrorStyle.css';
 
-export function useErrorHandlerCritical() {
+export function useErrorHandlerCritical(code) {
     const [, setLocation] = useLocation();
-
-    return (code) => {
-        switch (code) {
+    switch (code) {
             case 400:
                 setLocation("/error/400");
                 break;
@@ -16,12 +14,11 @@ export function useErrorHandlerCritical() {
                 setLocation("/error/500");
                 break;
             default:
-                setLocation("/error");
+                setLocation("/error/" + code);
         }
-    };
 }
 
-export function useErrorHandlerResource() {
+export function useErrorHandlerResource(code) {
     let message = "";
     switch (code) {
         case 401:

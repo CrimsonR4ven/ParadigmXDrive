@@ -2,6 +2,7 @@
 import { Link, useSearch } from "wouter";
 import { useGlobalState } from "./GlobalState";
 import { useErrorHandlerCritical, useErrorHandlerResource } from "./ErrorHandlers.jsx";
+import { authFetch } from './AuthWrapper.jsx';
 import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
 import dokumenten from './assets/icons9-document-512.png'
@@ -10,35 +11,33 @@ import path from "path-browserify";
 import './style/App.css';
 import './style/inputStyle.css';
 
-
-async function RenameFile(curPath, newName) {
-    let errHandler = useErrorHandlerResource();
-    let newPath = path.join(path.dirname(curPath), newName + path.extname(curPath));
-    await fetch("/File/UpdateFilePath?filePath=" + curPath + "&newPath=" + newPath, {
-        method: 'PATCH'
-    }).then(res => 
-    {
-        if (!res.ok) {
-            errHandler(res.status);
-            return res.status;
-        }
-    });
-    return 200;
-}
-
-
 function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
     let extention = path.extname(curFilePath);
-    
+    let errHandler = useErrorHandlerResource(); // MOVED HERE
+
     const [inputValue, setInputValue] = useState(
         path.basename(curFilePath, extention)
     );
 
     const handleSave = async () => {
-        let response = await RenameFile(curFilePath, inputValue);
-        if (response == 200) {
+        let newPath = path.join(path.dirname(curFilePath), inputValue + extention);
+
+        try {
+            const res = await authFetch("/api/File/UpdateFilePath?filePath=" + curFilePath + "&newPath=" + newPath, {
+                method: 'PATCH'
+            });
+
+            if (!res.ok) {
+                errHandler(res.status);
+                return;
+            }
+
             handleSuccess(inputValue + extention);
+        } catch (error) {
+            console.error('Rename failed:', error);
+            errHandler(500);
         }
+
         handleRenameCloseRef();
     }
     return (
@@ -106,7 +105,7 @@ function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingA
     }
 
     const handleFileDownload = () => {
-        fetch("/File/GetFileBlob?filePath=" + curFilePath)
+        authFetch("/api/File/GetFileBlob?filePath=" + curFilePath)
             .then(res => res.blob())
             .then(blob => {
                 const url = URL.createObjectURL(blob);
@@ -242,14 +241,14 @@ function DriveFolderView() {
     const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD";
 
     async function populateWeatherData(folder) {
-        const response = await fetch('/File/GetFolderData?folder=' + folder);
+        const response = await authFetch('/api/File/GetFolderData?folderPath=' + folder);
         if (response.ok) {
             return await response.json();
         }
     }
 
     const handleFileChanged = async () => {
-        const data = await populateWeatherData(actualFolder);
+    const data = await populateWeatherData(actualFolder);
         console.log(data + " " + actualFolder);
         setFolders(data);
     }
@@ -264,7 +263,7 @@ function DriveFolderView() {
             case "gif":
             case "ico":
                 setCurrentFileType("Image");
-                fetch("/File/GetFileBlob?filePath=" + path.join(actualFolder, file))
+                authFetch("/api/File/GetFileBlob?filePath=" + path.join(actualFolder, file))
                     .then(res => res.blob())
                     .then(blob => {
                         const url = URL.createObjectURL(blob);

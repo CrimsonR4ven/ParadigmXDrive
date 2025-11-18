@@ -3,7 +3,7 @@ import {useSearch} from "wouter";
 
 function ErrorView({errcode = null}) {
     let message = "";
-    switch (code) {
+    switch (errcode) {
         case 401:
             message = "Error 401: Authentication Failed";
             break;
@@ -15,6 +15,7 @@ function ErrorView({errcode = null}) {
             break;
         default:
             message = "Error: Something went wrong, try refreshing the site";
+            break
     }
     return (
         <>
@@ -28,4 +29,4 @@ function ErrorView({errcode = null}) {
     )
 }
 
-export default DriveFolderView;
+export default ErrorView;

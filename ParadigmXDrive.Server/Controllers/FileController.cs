@@ -9,7 +9,7 @@ using System.IO;
 namespace ParadigmXDrive.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class FileController : ControllerBase
     {
         private FolderStructure folderstruct;
