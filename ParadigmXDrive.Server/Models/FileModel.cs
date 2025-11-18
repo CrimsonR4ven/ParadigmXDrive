@@ -1,10 +1,10 @@
 ﻿namespace ParadigmXDrive.Server.Models
 {
-    public class FileDto
+    public class FileModel
     {
         public string Name { get; set; }
 
-        public FileDto(string name)
+        public FileModel(string name)
         {
             Name = name;
         }

@@ -10,7 +10,7 @@ namespace ParadigmXDrive.Server.Models
         public bool IsPublic;
 
         private List<String> subfolders;
-        private List<FileDto> fileList;
+        private List<FileModel> fileList;
 
         public string Path;
 
@@ -20,7 +20,7 @@ namespace ParadigmXDrive.Server.Models
             IsPublic = isPublic;
 
             subfolders = new List<string>();
-            fileList = new List<FileDto>();
+            fileList = new List<FileModel>();
 
             Path = path;
 
@@ -37,7 +37,7 @@ namespace ParadigmXDrive.Server.Models
 
             foreach (string file in files)
             {
-                fileList.Add(new FileDto(file[file.LastIndexOf('/')..]));
+                fileList.Add(new FileModel(file[file.LastIndexOf('/')..]));
             }
         }
 
