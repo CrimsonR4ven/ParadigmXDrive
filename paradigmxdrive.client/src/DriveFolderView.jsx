@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState} from 'react';
 import { Link, useSearch } from "wouter";
 import { useGlobalState } from "./GlobalState";
-import { useErrorHandlerCritical, useErrorHandlerResource } from "./ErrorHandlers.jsx";
+import { useErrorHandlerResource } from "./ErrorHandlers.jsx";
 import { authFetch } from './AuthWrapper.jsx';
 import folderen from './assets/icons8-folder-512.png'
 import folderenen from './assets/icons8-folder-64.png'
@@ -13,7 +13,6 @@ import './style/inputStyle.css';
 
 function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
     let extention = path.extname(curFilePath);
-    let errHandler = useErrorHandlerResource(); // MOVED HERE
 
     const [inputValue, setInputValue] = useState(
         path.basename(curFilePath, extention)
@@ -28,14 +27,14 @@ function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
             });
 
             if (!res.ok) {
-                errHandler(res.status);
+                useErrorHandlerResource(res.status);
                 return;
             }
 
             handleSuccess(inputValue + extention);
         } catch (error) {
             console.error('Rename failed:', error);
-            errHandler(500);
+            useErrorHandlerResource(500);
         }
 
         handleRenameCloseRef();

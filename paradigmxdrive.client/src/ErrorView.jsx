@@ -1,5 +1,4 @@
-import DriveFolderView from "@/DriveFolderView.jsx";
-import {useSearch} from "wouter";
+
 
 function ErrorView({errcode = null}) {
     let message = "";
@@ -15,7 +14,7 @@ function ErrorView({errcode = null}) {
             break;
         default:
             message = "Error: Something went wrong, try refreshing the site";
-            break
+            break;
     }
     return (
         <>
