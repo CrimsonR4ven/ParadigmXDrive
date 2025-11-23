@@ -9,7 +9,6 @@ function Login() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [, setLocation] = useLocation();
-    const errorHandlerCritical = useErrorHandlerCritical();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,7 +38,7 @@ function Login() {
                     return;
                 } else
                 {
-                    errorHandlerCritical(response.status);
+                    useErrorHandlerCritical(response.status);
                     return;
                 }
             }
