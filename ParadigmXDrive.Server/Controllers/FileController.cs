@@ -41,6 +41,9 @@ namespace ParadigmXDrive.Server.Controllers
             var fileLength = fileInfo.Length;
             var rangeHeader = Request.Headers["Range"].ToString();
 
+            // Set Content-Disposition for file download
+            Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileInfo.Name}\"");
+
             if (string.IsNullOrEmpty(rangeHeader))
                 return PhysicalFile(filePath, "application/octet-stream", enableRangeProcessing: true);
 
@@ -68,6 +71,8 @@ namespace ParadigmXDrive.Server.Controllers
                 await Response.Body.WriteAsync(buffer.AsMemory(0, read));
                 remaining -= read;
             }
+
+            await Response.Body.FlushAsync(); // Ensure all data is sent
 
             return new EmptyResult();
         }
