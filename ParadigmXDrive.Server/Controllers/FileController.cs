@@ -34,8 +34,8 @@ namespace ParadigmXDrive.Server.Controllers
         [HttpGet("GetFileBlob")]
         public async Task<IActionResult> GetDownloadFile(string filePath)
         {
-            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-            return File(fileBytes, MimeMapping.MimeUtility.GetMimeMapping(filePath), Path.GetFileName(filePath));
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, MimeMapping.MimeUtility.GetMimeMapping(filePath), Path.GetFileName(filePath));
         }
 
         [HttpPatch("UpdateFilePath")]
