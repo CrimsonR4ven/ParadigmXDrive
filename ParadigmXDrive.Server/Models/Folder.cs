@@ -1,5 +1,4 @@
-﻿using ParadigmXDrive.Server.Types;
-using System.Text.Json;
+﻿ using System.Text.Json;
 
 namespace ParadigmXDrive.Server.Models
 {
@@ -12,9 +11,9 @@ namespace ParadigmXDrive.Server.Models
         private List<String> subfolders;
         private List<FileModel> fileList;
 
-        public string Path;
+        public string FolderPath;
 
-        public Folder(string name, bool isPublic, string? description, string path)
+        public Folder(string name, bool isPublic, string? description, string folderPath)
         {
             folderData = new FolderDto(name, description);
             IsPublic = isPublic;
@@ -22,10 +21,10 @@ namespace ParadigmXDrive.Server.Models
             subfolders = new List<string>();
             fileList = new List<FileModel>();
 
-            Path = path;
+            FolderPath = folderPath;
 
-            loadFilesAsObjects(Path);
-            foreach (var dir in Directory.GetDirectories(Path))
+            loadFilesAsObjects(FolderPath);
+            foreach (var dir in Directory.GetDirectories(FolderPath))
             {
                 subfolders.Add(dir[dir.LastIndexOf('/')..]);
             }
@@ -41,14 +40,27 @@ namespace ParadigmXDrive.Server.Models
             }
         }
 
-        public string? GetJson()
+        public string GetJson()
         {
-            string? json;
+            string json;
             json = "{ \"Subfolders\": ";
             json += JsonSerializer.Serialize(subfolders);
             json += ", \"Files\": ";
             json += JsonSerializer.Serialize(fileList);
             json += "}";
+            return json;
+        }
+
+        public string GetSubfolders()
+        {
+            string json;
+            json = "{ \"Name\": \"" + folderData.Name + "\", \"Subfolders\": [";
+            for (int i = 0; i < subfolders.Count(); i++)
+            {
+                if (i > 0) json += ",";
+                json += new Folder(subfolders[i], false, null, FolderPath + Path.DirectorySeparatorChar + subfolders[i]).GetSubfolders();
+            }
+            json += "]}";
             return json;
         }
     }

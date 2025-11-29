@@ -30,7 +30,16 @@ namespace ParadigmXDrive.Server.Controllers
             var resp = new Folder(folderName, false, null, folderPath).GetJson();
             return Ok(resp);
         }
-
+        
+        [HttpGet("GetFolderPaths")]
+        public async Task<IActionResult> GetFolderPaths(string folderPath)
+        {
+            if (!Directory.Exists(folderPath)) return NotFound();
+            var folderName = Path.GetDirectoryName(folderPath); 
+            var resp = new Folder(folderName, false, null, folderPath).GetSubfolders();
+            return Ok(resp);
+        }
+        
         [HttpGet("GetFileBlob")]
         public async Task<IActionResult> GetDownloadFile(string filePath)
         {
@@ -40,14 +49,12 @@ namespace ParadigmXDrive.Server.Controllers
             var fileInfo = new FileInfo(filePath);
             var fileLength = fileInfo.Length;
             var rangeHeader = Request.Headers["Range"].ToString();
-
-            // Set Content-Disposition for file download
+            
             Response.Headers.Add("Content-Disposition", $"attachment; filename=\"{fileInfo.Name}\"");
 
             if (string.IsNullOrEmpty(rangeHeader))
                 return PhysicalFile(filePath, "application/octet-stream", enableRangeProcessing: true);
-
-            // Parse range
+            
             var range = rangeHeader.Replace("bytes=", "").Split('-');
             var start = long.Parse(range[0]);
             var end = range.Length > 1 && !string.IsNullOrEmpty(range[1]) ? long.Parse(range[1]) : fileLength - 1;
@@ -72,7 +79,7 @@ namespace ParadigmXDrive.Server.Controllers
                 remaining -= read;
             }
 
-            await Response.Body.FlushAsync(); // Ensure all data is sent
+            await Response.Body.FlushAsync();
 
             return new EmptyResult();
         }

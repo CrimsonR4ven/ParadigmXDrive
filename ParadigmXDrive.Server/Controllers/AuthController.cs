@@ -14,6 +14,7 @@ namespace ParadigmXDrive.Server.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        //TODO: connect to database
         private static List<AppUser> Users = new List<AppUser>()
         {
             new AppUser("Admin", "Admin", UserRole.Admin)

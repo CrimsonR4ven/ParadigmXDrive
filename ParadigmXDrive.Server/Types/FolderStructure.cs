@@ -17,7 +17,7 @@ namespace ParadigmXDrive.Server.Types
         public string? GetFolderData(string folderPath /*, int senderID*/)
         {
             if (!Directory.Exists(folderPath)) return null;
-            if (currFolder.Path != folderPath) loadFolder(folderPath);
+            if (currFolder.FolderPath != folderPath) loadFolder(folderPath);
             return currFolder.GetJson();
         }
         
@@ -30,7 +30,7 @@ namespace ParadigmXDrive.Server.Types
         
         public string GetFilePath(string fileName)
         {
-            return currFolder.Path + (fileName[0] != Path.DirectorySeparatorChar ? Path.DirectorySeparatorChar : "" )+ fileName;
+            return currFolder.FolderPath + (fileName[0] != Path.DirectorySeparatorChar ? Path.DirectorySeparatorChar : "" )+ fileName;
         }
     }
 }

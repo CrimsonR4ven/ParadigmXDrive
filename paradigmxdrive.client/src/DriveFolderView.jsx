@@ -11,6 +11,153 @@ import path from "path-browserify";
 import './style/App.css';
 import './style/inputStyle.css';
 
+function FolderNode({ node, onSelect }) {
+    const [expanded, setExpanded] = useState(false);
+
+    const toggle = () => setExpanded(!expanded);
+
+    return (
+        <div style={{ marginLeft: "16px" }}>
+            <div
+                style={{ cursor: "pointer", color: "white" }}
+                onClick={toggle}
+            >
+                📁 {node.Name}
+            </div>
+
+            {expanded && node.Subfolders && node.Subfolders.length > 0 && (
+                <div style={{ marginLeft: "16px" }}>
+                    {node.Subfolders.map((sf, i) => (
+                        <FolderNode key={i} node={sf} onSelect={onSelect} />
+                    ))}
+                </div>
+            )}
+
+            <button
+                style={{
+                    background: "#3a82f7",
+                    border: "none",
+                    padding: "4px 8px",
+                    marginTop: "4px",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    color: "white",
+                }}
+                onClick={() => onSelect(node)}
+            >
+                Select this folder
+            </button>
+        </div>
+    );
+}
+
+function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
+    const [folderTree, setFolderTree] = useState(null);
+    const [selected, setSelected] = useState(null);
+
+    const loadTree = async () => {
+        const res = await authFetch(
+            "/api/File/GetFolderPaths?folderPath=" + encodeURIComponent("/")
+        );
+        if (res.ok) {
+            const json = await res.json();
+            setFolderTree(json);
+        }
+    };
+
+    useEffect(() => {
+        loadTree();
+    }, []);
+
+    const handleMove = async () => {
+        if (!selected) return;
+
+        const fileName = curFilePath.split("/").at(-1);
+        const newPath = path.join(selected.FullPath, fileName);
+
+        try {
+            const res = await authFetch(
+                "/api/File/UpdateFilePath?filePath=" +
+                encodeURIComponent(curFilePath) +
+                "&newPath=" +
+                encodeURIComponent(newPath),
+                { method: "PATCH" }
+            );
+
+            if (res.ok) {
+                handleSuccess();
+                handleMoveClose();
+            }
+        } catch (err) {
+            console.error("Move failed:", err);
+        }
+    };
+
+    return (
+        <>
+            <div
+                onClick={handleMoveClose}
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                    zIndex: 1003,
+                }}
+            ></div>
+
+            <div
+                style={{
+                    position: "fixed",
+                    top: "20vh",
+                    left: "30vw",
+                    width: "40vw",
+                    height: "60vh",
+                    backgroundColor: "rgb(30,30,30)",
+                    zIndex: 1004,
+                    borderRadius: "16px",
+                    padding: "20px",
+                    overflowY: "scroll",
+                    color: "white",
+                }}
+            >
+                <h3>Select destination folder</h3>
+
+                {!folderTree ? (
+                    <p>Loading folders...</p>
+                ) : (
+                    <FolderNode node={folderTree} onSelect={setSelected} />
+                )}
+
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginTop: "20px",
+                    }}
+                >
+                    <button
+                        className="Cancel-btn"
+                        onClick={handleMoveClose}
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        className="Save-btn"
+                        disabled={!selected}
+                        onClick={handleMove}
+                    >
+                        Move Here
+                    </button>
+                </div>
+            </div>
+        </>
+    );
+}
+
 function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
     let extention = path.extname(curFilePath);
 
@@ -87,6 +234,7 @@ function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
 function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingAction}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
     const [fileName, setFileName] = useState(curFilePath.split('/').at(-1));
+    const [isMoveOpen, setIsMoveOpen] = useState(false);
     let errHandler = useErrorHandlerResource();
     
     const handleRenameOpen = () => {
@@ -147,9 +295,10 @@ function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingA
             paddingLeft: 15,
             boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
         }}>
-            <img src={dokumenten} alt="folder" style={{ height: "80%", float: "left", marginRight: "10px" }} />
+            <img src={dokumenten} alt="folder icon" style={{ height: "80%", float: "left", marginRight: "10px" }} />
             <p style={{ color: "white" }} onClick={() => handleRenameOpen()}>{fileName}</p>
-            <img src={downloaden} alt="folder" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => handleFileDownload()} />
+            <img src={downloaden} alt="move file icon" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => setIsMoveOpen(true)} />
+            <img src={downloaden} alt="download icon" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => handleFileDownload()} />
         </div>
     </div>
         <div
@@ -226,7 +375,13 @@ function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingA
         </div>)}
 
         {isRenameOpen && (<RenameWindow curFilePath={curFilePath} handleRenameCloseRef={() => handleRenameClose()} handleSuccess={newName => handleChangeNameSuccess(newName) }></RenameWindow>)}
-    </>)
+        {isMoveOpen && (
+            <MoveWindow
+                curFilePath={curFilePath}
+                handleMoveClose={() => setIsMoveOpen(false)}
+                handleSuccess={() => handleFileChangingAction()}
+            />)}
+        </>)
 }
 
 function DriveFolderView() {
