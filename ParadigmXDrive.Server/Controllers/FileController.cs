@@ -35,7 +35,7 @@ namespace ParadigmXDrive.Server.Controllers
         [HttpGet("GetFolderPaths")]
         public async Task<IActionResult> GetFolderPaths(string folderPath)
         {
-            var driveWatcher = VirtualDriveWatcherService.VirtualDrives.FirstOrDefault(x => x.BasePath == folderPath);
+            var driveWatcher = VirtualDriveWatcherService.VirtualDrives.FirstOrDefault(x => x.BasePath == folderPath.Replace("%20", " "));
             if (driveWatcher == null) return NotFound();
             var resp = driveWatcher.FolderStructure.GetSubfolders();
             return Ok(resp);
