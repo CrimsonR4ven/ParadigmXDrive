@@ -8,7 +8,7 @@ public class VirtualDriveFolderNode
 
     public VirtualDriveFolderNode(string path)
     {
-        this.name = Path.GetDirectoryName(path);
+        this.name = Path.GetFileName(path);
         this.path = path;
 
         subfolders = new List<VirtualDriveFolderNode>();
