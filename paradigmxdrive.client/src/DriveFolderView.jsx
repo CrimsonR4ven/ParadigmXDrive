@@ -124,13 +124,29 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                 }}
             >
                 <h3>Select destination folder</h3>
+                
+                <div
+                    style={{
+                        position: "fixed",
+                        top: "22vh",
+                        left: "32vw",
+                        width: "36vw",
+                        height: "54vh",
+                        backgroundColor: "rgb(30,30,30)",
+                        zIndex: 1004,
+                        borderRadius: "16px",
+                        padding: "20px",
+                        overflowY: "scroll",
+                        color: "white",
+                    }}
+                >
 
                 {!folderTree ? (
                     <p>Loading folders...</p>
                 ) : (
                     <FolderNode node={folderTree} onSelect={setSelected} />
                 )}
-
+                </div>
                 <div
                     style={{
                         display: "flex",
