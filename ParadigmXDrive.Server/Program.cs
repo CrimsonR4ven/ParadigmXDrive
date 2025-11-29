@@ -1,10 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ParadigmXDrive.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+VirtualDriveWatcherService.LoadVirtualDrives();
 
 builder.Services.AddControllers();
 
