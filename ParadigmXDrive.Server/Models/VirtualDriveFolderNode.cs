@@ -10,6 +10,9 @@ public class VirtualDriveFolderNode
     {
         this.name = Path.GetDirectoryName(path);
         this.path = path;
+
+        subfolders = new List<VirtualDriveFolderNode>();
+        
         foreach (var dir in Directory.GetDirectories(path))
         {
             subfolders.Add(new VirtualDriveFolderNode(dir));

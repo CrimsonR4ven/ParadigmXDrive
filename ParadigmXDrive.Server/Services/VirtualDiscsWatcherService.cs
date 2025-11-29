@@ -15,7 +15,7 @@ public class VirtualDriveWatcherService
         VirtualDrives = new List<VirtualDriveWatcher>();
         foreach (var path in DiskPaths)
         {
-            Task.Run(() => VirtualDrives.Add(new VirtualDriveWatcher(path))).Wait();
+            VirtualDrives.Add(new VirtualDriveWatcher(path));
         }
 
         Console.WriteLine("Drives loaded");
