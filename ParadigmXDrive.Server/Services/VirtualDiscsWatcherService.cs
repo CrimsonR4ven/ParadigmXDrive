@@ -12,6 +12,11 @@ public class VirtualDriveWatcherService
     
     public static void LoadVirtualDrives()
     {
-        
+        foreach (var path in DiskPaths)
+        {
+            Task.Run(() => VirtualDrives.Add(new VirtualDriveWatcher(path))).Wait();
+        }
+
+        Console.WriteLine("Drives loaded");
     }
 }

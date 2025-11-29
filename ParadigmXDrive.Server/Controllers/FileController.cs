@@ -5,6 +5,7 @@ using ParadigmXDrive.Server.Models;
 using ParadigmXDrive.Server.Types;
 using System.Net.WebSockets;
 using System.IO;
+using ParadigmXDrive.Server.Services;
 
 namespace ParadigmXDrive.Server.Controllers
 {
@@ -34,9 +35,9 @@ namespace ParadigmXDrive.Server.Controllers
         [HttpGet("GetFolderPaths")]
         public async Task<IActionResult> GetFolderPaths(string folderPath)
         {
-            if (!Directory.Exists(folderPath)) return NotFound();
-            var folderName = Path.GetDirectoryName(folderPath); 
-            var resp = new Folder(folderName, false, null, folderPath).GetSubfolders();
+            var driveWatcher = VirtualDriveWatcherService.VirtualDrives.FirstOrDefault(x => x.BasePath == folderPath);
+            if (driveWatcher == null) return NotFound();
+            var resp = driveWatcher.FolderStructure.GetSubfolders();
             return Ok(resp);
         }
         
