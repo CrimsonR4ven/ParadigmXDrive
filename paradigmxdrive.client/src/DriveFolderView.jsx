@@ -57,7 +57,7 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
 
     const loadTree = async () => {
         const res = await authFetch(
-            "/api/File/GetFolderPaths?folderPath=" + encodeURIComponent("/")
+            "/api/File/GetFolderPaths?folderPath=" + encodeURIComponent("/media/pi/Extreme%20SSD")
         );
         if (res.ok) {
             const json = await res.json();
