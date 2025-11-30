@@ -68,7 +68,7 @@ namespace ParadigmXDrive.Server.Controllers
 
             using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             fs.Seek(start, SeekOrigin.Begin);
-            var buffer = new byte[64 * 1024]; // 64KB buffer
+            var buffer = new byte[64 * 1024]; 
 
             long remaining = contentLength;
             while (remaining > 0)

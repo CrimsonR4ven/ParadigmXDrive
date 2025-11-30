@@ -13,7 +13,7 @@ public class VirtualDriveFolderNode
 
         subfolders = new List<VirtualDriveFolderNode>();
         
-        foreach (var dir in Directory.GetDirectories(path))
+        foreach (var dir in Directory.EnumerateDirectories(path, "*",  SearchOption.TopDirectoryOnly))
         {
             subfolders.Add(new VirtualDriveFolderNode(dir));
         }

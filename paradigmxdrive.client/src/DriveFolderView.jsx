@@ -14,7 +14,7 @@ import './style/inputStyle.css';
 function FolderNode({ node, onSelect, selected }) {
     const [expanded, setExpanded] = useState(false);
 
-    const toggle = () => setExpanded(!expanded);
+    const toggle = () => { setExpanded(!expanded); onSelect(node);}
 
     return (
         <div style={{ marginLeft: "16px" }}>
@@ -32,21 +32,7 @@ function FolderNode({ node, onSelect, selected }) {
                     ))}
                 </div>
             )}
-
-            <button
-                style={{
-                    background: "#3a82f7",
-                    border: "none",
-                    padding: "4px 8px",
-                    marginTop: "4px",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    color: "white",
-                }}
-                onClick={() => onSelect(node)}
-            >
-                Select this folder
-            </button>
+            
         </div>
     );
 }
@@ -77,10 +63,8 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
 
         try {
             const res = await authFetch(
-                "/api/File/UpdateFilePath?filePath=" +
-                encodeURIComponent(curFilePath) +
-                "&newPath=" +
-                encodeURIComponent(newPath),
+                "/api/File/UpdateFilePath?filePath=" + curFilePath +
+                "&newPath=" + newPath,
                 { method: "PATCH" }
             );
 
