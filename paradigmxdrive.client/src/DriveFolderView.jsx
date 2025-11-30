@@ -147,6 +147,7 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                     <FolderNode node={folderTree} onSelect={setSelected} />
                 )}
                 </div>
+                
                 <div
                     style={{
                         display: "flex",
