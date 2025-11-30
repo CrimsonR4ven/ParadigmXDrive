@@ -72,7 +72,7 @@ public class VirtualDriveFolderNode
     public string GetSubfolders()
     {
         string json;
-        json = "{ \"Name\": \"" + name + "\", \"Subfolders\": [";
+        json = "{ \"Name\": \"" + name + "\", \"FullPath\": \"" + path + "\", \"Subfolders\": [";
         for (int i = 0; i < subfolders.Count(); i++)
         {
             if (i > 0) json += ",";
