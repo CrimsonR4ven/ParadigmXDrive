@@ -14,17 +14,22 @@ import './style/inputStyle.css';
 function FolderNode({ node, onSelect, selected }) {
     const [expanded, setExpanded] = useState(false);
 
-    const toggle = () => { setExpanded(!expanded); onSelect(node);}
-
     return (
         <div style={{ marginLeft: "16px" }}>
             <div
                 style={{ cursor: "pointer", color: ( selected == node ? "white" : "blue" ) }}
-                onClick={toggle}
+                onClick={() => onSelect(node)}
             >
                 📁 {node.Name}
             </div>
-
+            
+            <div
+                style={{ cursor: "pointer", color: "white" }}
+                onClick={() => setExpanded(!expanded)}
+            >
+                \/
+            </div>
+            
             {expanded && node.Subfolders && node.Subfolders.length > 0 && (
                 <div style={{ marginLeft: "16px" }}>
                     {node.Subfolders.map((sf, i) => (
