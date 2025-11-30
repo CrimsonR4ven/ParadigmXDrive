@@ -119,7 +119,6 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                     zIndex: 1004,
                     borderRadius: "16px",
                     padding: "20px",
-                    overflowY: "scroll",
                     color: "white",
                 }}
             >
@@ -128,11 +127,11 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                 <div
                     style={{
                         position: "fixed",
-                        top: "22vh",
+                        top: "24vh",
                         left: "32vw",
                         width: "36vw",
-                        height: "54vh",
-                        backgroundColor: "rgb(30,30,30)",
+                        height: "50vh",
+                        backgroundColor: "rgb(60,60,60)",
                         zIndex: 1004,
                         borderRadius: "16px",
                         padding: "20px",
