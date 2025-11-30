@@ -120,31 +120,32 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                     borderRadius: "16px",
                     padding: "20px",
                     color: "white",
+
+                    display: "flex",
+                    flexDirection: "column",
                 }}
             >
                 <h3>Select destination folder</h3>
                 
                 <div
                     style={{
-                        position: "fixed",
-                        top: "24vh",
-                        left: "32vw",
-                        width: "36vw",
-                        height: "50vh",
+                        flex: 1,              
                         backgroundColor: "rgb(60,60,60)",
-                        zIndex: 1004,
                         borderRadius: "16px",
                         padding: "20px",
                         overflowY: "scroll",
-                        color: "white",
-                    }}
-                >
 
-                {!folderTree ? (
-                    <p>Loading folders...</p>
-                ) : (
-                    <FolderNode node={folderTree} onSelect={setSelected} />
-                )}
+                       
+                        scrollbarWidth: "none",      
+                        msOverflowStyle: "none",     
+                    }}
+                    className="no-scrollbar"
+                >
+                    {!folderTree ? (
+                        <p>Loading folders...</p>
+                    ) : (
+                        <FolderNode node={folderTree} onSelect={setSelected} />
+                    )}
                 </div>
                 
                 <div
@@ -154,18 +155,11 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                         marginTop: "20px",
                     }}
                 >
-                    <button
-                        className="Cancel-btn"
-                        onClick={handleMoveClose}
-                    >
+                    <button className="Cancel-btn" onClick={handleMoveClose}>
                         Cancel
                     </button>
 
-                    <button
-                        className="Save-btn"
-                        disabled={!selected}
-                        onClick={handleMove}
-                    >
+                    <button className="Save-btn" disabled={!selected} onClick={handleMove}>
                         Move Here
                     </button>
                 </div>
