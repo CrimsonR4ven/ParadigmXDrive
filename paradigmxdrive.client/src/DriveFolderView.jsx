@@ -17,14 +17,14 @@ function FolderNode({ node, onSelect, selected }) {
     return (
         <div style={{ marginLeft: "16px" }}>
             <div
-                style={{ cursor: "pointer", color: ( selected == node ? "white" : "blue" ) }}
+                style={{ cursor: "pointer", color: ( selected == node ? "lightBlue" : "white" ), float: "left" }}
                 onClick={() => onSelect(node)}
             >
                 📁 {node.Name}
             </div>
             
             <div
-                style={{ cursor: "pointer", color: "white" }}
+                style={{ cursor: "pointer", color: "white", float: "left" }}
                 onClick={() => setExpanded(!expanded)}
             >
                 \/
