@@ -16,28 +16,43 @@ function FolderNode({ node, onSelect, selected }) {
 
     return (
         <div style={{ marginLeft: "16px" }}>
-            <div
-                style={{ cursor: "pointer", color: ( selected == node ? "lightBlue" : "white" ), float: "left" }}
-                onClick={() => onSelect(node)}
-            >
-                📁 {node.Name}
+            <div style={{ display: "flex", alignItems: "center" }}>
+
+                <div
+                    style={{
+                        cursor: "pointer",
+                        color: (selected === node ? "lightBlue" : "white"),
+                        marginRight: "8px"
+                    }}
+                    onClick={() => onSelect(node)}
+                >
+                    📁 {node.Name}
+                </div>
+
+                <div
+                    style={{
+                        cursor: "pointer",
+                        color: "white",
+                    }}
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    {expanded ? "⬆️" : "⬇️"}
+                </div>
+
             </div>
-            
-            <div
-                style={{ cursor: "pointer", color: "white", float: "left" }}
-                onClick={() => setExpanded(!expanded)}
-            >
-                \/
-            </div>
-            
-            {expanded && node.Subfolders && node.Subfolders.length > 0 && (
+
+            {expanded && node.Subfolders?.length > 0 && (
                 <div style={{ marginLeft: "16px" }}>
                     {node.Subfolders.map((sf, i) => (
-                        <FolderNode key={i} node={sf} onSelect={onSelect} selected={selected} />
+                        <FolderNode
+                            key={i}
+                            node={sf}
+                            onSelect={onSelect}
+                            selected={selected}
+                        />
                     ))}
                 </div>
             )}
-            
         </div>
     );
 }
