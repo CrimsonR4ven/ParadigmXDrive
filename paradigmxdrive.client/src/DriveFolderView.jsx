@@ -11,7 +11,7 @@ import path from "path-browserify";
 import './style/App.css';
 import './style/inputStyle.css';
 
-function FolderNode({ node, onSelect }) {
+function FolderNode({ node, onSelect, selected }) {
     const [expanded, setExpanded] = useState(false);
 
     const toggle = () => setExpanded(!expanded);
@@ -19,7 +19,7 @@ function FolderNode({ node, onSelect }) {
     return (
         <div style={{ marginLeft: "16px" }}>
             <div
-                style={{ cursor: "pointer", color: "white" }}
+                style={{ cursor: "pointer", color: ( selected == node ? "white" : "blue" ) }}
                 onClick={toggle}
             >
                 📁 {node.Name}
@@ -28,7 +28,7 @@ function FolderNode({ node, onSelect }) {
             {expanded && node.Subfolders && node.Subfolders.length > 0 && (
                 <div style={{ marginLeft: "16px" }}>
                     {node.Subfolders.map((sf, i) => (
-                        <FolderNode key={i} node={sf} onSelect={onSelect} />
+                        <FolderNode key={i} node={sf} onSelect={onSelect} selected={selected} />
                     ))}
                 </div>
             )}
@@ -144,7 +144,7 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                     {!folderTree ? (
                         <p>Loading folders...</p>
                     ) : (
-                        <FolderNode node={folderTree} onSelect={setSelected} />
+                        <FolderNode node={folderTree} onSelect={setSelected} selected={selected} />
                     )}
                 </div>
                 
