@@ -249,6 +249,8 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
     const [isRenameOpen, setIsRenameOpen] = useState(false);
     const [fileName, setFileName] = useState(curFilePath.split('/').at(-1));
     const [isMoveOpen, setIsMoveOpen] = useState(false);
+    const [imageScale, setImageScale] = useState(1);
+
     let errHandler = useErrorHandlerResource();
     
     const handleRenameOpen = () => {
@@ -302,39 +304,56 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                     Loading preview...
                 </div>
             )}
-        <div style={{
-        position: "fixed",
-        top: "0vh",
-        left: 0,
-        width: "100vw",
-        height: "4vh",
-        backgroundColor: "rgba(0,0,0,0.7)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000,
-    }} >
-        <div style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "4vh",
-            backgroundColor: "rgb(30,30,30)",
-            display: "flex",
-            justifyContent: "left",
-            alignItems: "center",
-            zIndex: 1000,
-            borderRadius: "0px 0px 20px 20px",
-            paddingLeft: 15,
-            boxShadow: "0 8px 20px rgba(0,0,0,0.5)",
-        }}>
-            <img src={dokumenten} alt="folder icon" style={{ height: "80%", float: "left", marginRight: "10px" }} />
-            <p style={{ color: "white" }} onClick={() => handleRenameOpen()}>{fileName}</p>
-            <img src={downloaden} alt="move file icon" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => setIsMoveOpen(true)} />
-            <img src={downloaden} alt="download icon" style={{ height: "70%", marginLeft: "auto", marginRight: "20px", cursor: "pointer" }} onClick={() => handleFileDownload()} />
-        </div>
-    </div>
+            <div
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "4vh",
+                    backgroundColor: "rgb(30,30,30)",
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0 15px",
+                    zIndex: 2000,
+                    borderRadius: "0 0 16px 16px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                    userSelect: "none"
+                }}
+            >
+                <img
+                    src={dokumenten}
+                    alt="file"
+                    style={{ height: "70%", marginRight: 10 }}
+                />
+
+                <p
+                    style={{
+                        color: "white",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        cursor: "pointer"
+                    }}
+                    onClick={handleRenameOpen}
+                >
+                    {fileName}
+                </p>
+                
+                <div style={{ marginLeft: "auto", display: "flex", gap: "18px" }}>
+                    <img
+                        src={downloaden}
+                        alt="move"
+                        style={{ height: "70%", cursor: "pointer" }}
+                        onClick={() => setIsMoveOpen(true)}
+                    />
+                    <img
+                        src={downloaden}
+                        alt="download"
+                        style={{ height: "70%", cursor: "pointer" }}
+                        onClick={handleFileDownload}
+                    />
+                </div>
+            </div>
         <div
             onClick={onDivClick}
             style={{
@@ -350,9 +369,27 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                 zIndex: 1000,
             }}
         >
-            {type == "Image" && (<img className="previewImage" src={fileBlob} alt="file" style={{ height: "85%", zIndex: 1002 }} />)}
-            {type === "Video" && (<video controls style={{ Height: "85%", maxWidth: "85%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support video playback. </video>)}
-            {type === "Audio" && (<audio controls style={{ width: "40%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support audio playback. </audio>)}
+            {type == "Image" && (
+                <img 
+                    className="previewImage" 
+                    src={fileBlob} 
+                    alt="file" 
+                    style={{ height: `${85 * imageScale}%`, zIndex: 1002 }} 
+                />)}
+            {type === "Video" && (
+                <video 
+                    controls 
+                    style={{ Height: "85%", maxWidth: "85%", zIndex: 1002 }}> 
+                    <source src={fileBlob} /> 
+                    Your browser does not support video playback. 
+                </video>)}
+            {type === "Audio" && (
+                <audio 
+                    controls 
+                    style={{ width: "40%", zIndex: 1002 }}> 
+                    <source src={fileBlob} /> 
+                    Your browser does not support audio playback. 
+                </audio>)}
             {type === "Text" && (
                 <div style={{
                     background: "rgb(30,30,30)",
@@ -367,8 +404,7 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                     zIndex: 1002
                 }}>
                     {fileBlob}
-                </div>
-            )}
+                </div>)}
         </div>
 
         {type == "Unknown" && (<div
@@ -424,6 +460,39 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                 borderRadius: "20px",
             }}
         >
+            <button
+                style={{
+                    backgroundColor: "#3a82f7",
+                    border: "none",
+                    color: "white",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    width: "30%",
+                    height: "70%",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                }}
+                onClick={() => setImageScale(prev => Math.max(prev - 0.1, 0.1))}
+            >
+                -
+            </button>
+            <span style={{ color: "white" }}>{Math.round(imageScale * 100)}%</span>
+            <button
+                style={{
+                    backgroundColor: "#3a82f7",
+                    border: "none",
+                    color: "white",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    width: "30%",
+                    height: "70%",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                }}
+                onClick={() => setImageScale(prev => Math.min(prev + 0.1, 3))}
+            >
+                +
+            </button>
         </div>)}
 
         {isRenameOpen && (<RenameWindow curFilePath={curFilePath} handleRenameCloseRef={() => handleRenameClose()} handleSuccess={newName => handleChangeNameSuccess(newName) }></RenameWindow>)}
