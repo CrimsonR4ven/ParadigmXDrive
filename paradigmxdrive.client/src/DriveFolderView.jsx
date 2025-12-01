@@ -308,14 +308,13 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                 position: "fixed",
                 top: 0,
                 left: 0,
-                width: "100vw",
-                height: "50px", // bigger
+                width: "Calc(100vw - 30px)",
+                height: "4vh", 
                 backgroundColor: "rgb(30,30,30)",
                 display: "flex",
                 alignItems: "center",
                 padding: "0 15px",
                 zIndex: 2000,
-                borderRadius: "0 0 16px 16px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
                 userSelect: "none"
             }}>
