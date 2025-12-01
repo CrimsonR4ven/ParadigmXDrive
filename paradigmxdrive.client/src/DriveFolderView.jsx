@@ -245,7 +245,7 @@ function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
         </>
     )}
 
-function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingAction}) {
+function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangingAction}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
     const [fileName, setFileName] = useState(curFilePath.split('/').at(-1));
     const [isMoveOpen, setIsMoveOpen] = useState(false);
@@ -330,7 +330,25 @@ function FilePreview({ image, curFilePath, onDivClick, type, handleFileChangingA
                 zIndex: 1000,
             }}
         >
-            {type == "Image" && (<img className="previewImage" src={image} alt="file" style={{ height: "85%", zIndex: 1002 }} />)}
+            {type == "Image" && (<img className="previewImage" src={fileBlob} alt="file" style={{ height: "85%", zIndex: 1002 }} />)}
+            {type === "Video" && (<video controls style={{ maxHeight: "85%", maxWidth: "85%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support video playback. </video>)}
+            {type === "Audio" && (<audio controls style={{ width: "60%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support audio playback. </audio>)}
+            {type === "Text" && (
+                <div style={{
+                    background: "rgb(30,30,30)",
+                    color: "white",
+                    padding: "20px",
+                    width: "70vw",
+                    height: "70vh",
+                    overflowY: "auto",
+                    borderRadius: "12px",
+                    whiteSpace: "pre-wrap",
+                    fontFamily: "monospace",
+                    zIndex: 1002
+                }}>
+                    {fileBlob}
+                </div>
+            )}
         </div>
 
         {type == "Unknown" && (<div
@@ -439,7 +457,29 @@ function DriveFolderView() {
                     });
                 break;
             case "txt":
+            case "md":
+            case "json":
+            case "csv":
                 setCurrentFileType("Text");
+                authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
+                    .then(res => res.text())
+                    .then(text => setCurrentFilePreview(text));
+                break;
+            case "mp3":
+            case "wav":
+            case "ogg":
+                setCurrentFileType("Audio");
+                authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
+                    .then(res => res.blob())
+                    .then(blob => setCurrentFilePreview(URL.createObjectURL(blob)));
+                break;
+            case "mp4":
+            case "webm":
+            case "mov":
+                setCurrentFileType("Video");
+                authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
+                    .then(res => res.blob())
+                    .then(blob => setCurrentFilePreview(URL.createObjectURL(blob)));
                 break;
             default:
                 setCurrentFileType("Unknown");
@@ -496,7 +536,7 @@ function DriveFolderView() {
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview curFilePath={actualFolder + currentFileName} onDivClick={() => handlePreviewClose()} image={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
+            {isOpen && (<FilePreview curFilePath={actualFolder + currentFileName} onDivClick={() => handlePreviewClose()} fileBlob={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
             }
             </div>
     );
