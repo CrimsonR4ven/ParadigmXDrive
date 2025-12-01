@@ -245,7 +245,7 @@ function RenameWindow({ curFilePath, handleRenameCloseRef, handleSuccess }) {
         </>
     )}
 
-function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangingAction}) {
+function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangingAction, isLoadingPreview}) {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
     const [fileName, setFileName] = useState(curFilePath.split('/').at(-1));
     const [isMoveOpen, setIsMoveOpen] = useState(false);
@@ -282,6 +282,26 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
 
     return (
         <>
+            {isLoadingPreview && (
+                <div style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundColor: "rgba(0,0,0,0.6)",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 3000,
+                    color: "white",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    backdropFilter: "blur(3px)"
+                }}>
+                    Loading preview...
+                </div>
+            )}
         <div style={{
         position: "fixed",
         top: "0vh",
@@ -421,6 +441,7 @@ function DriveFolderView() {
     const [currentFilePreview, setCurrentFilePreview] = useState(null);
     const [currentFileName, setCurrentFileName] = useState("");
     const [currentFileType, setCurrentFileType] = useState("");
+    const [isLoadingPreview, setIsLoadingPreview] = useState(false);
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
@@ -440,6 +461,9 @@ function DriveFolderView() {
     }
 
     const handlePreviewOpen = (file) => {
+        var fullPath = path.join(actualFolder, file)
+        setIsLoadingPreview(true);
+        
         switch (file.split('.').at(-1))
         {
             case "jpg":
@@ -449,11 +473,12 @@ function DriveFolderView() {
             case "gif":
             case "ico":
                 setCurrentFileType("Image");
-                authFetch("/api/File/GetFileBlob?filePath=" + path.join(actualFolder, file))
+                authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
                     .then(res => res.blob())
                     .then(blob => {
                         const url = URL.createObjectURL(blob);
                         setCurrentFilePreview(url);
+                        setIsLoadingPreview(false);
                     });
                 break;
             case "txt":
@@ -463,26 +488,29 @@ function DriveFolderView() {
                 setCurrentFileType("Text");
                 authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
                     .then(res => res.text())
-                    .then(text => setCurrentFilePreview(text));
+                    .then(text => 
+                    {
+                        setCurrentFilePreview(text); 
+                        setIsLoadingPreview(false);
+                    });
                 break;
             case "mp3":
             case "wav":
             case "ogg":
                 setCurrentFileType("Audio");
-                authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
-                    .then(res => res.blob())
-                    .then(blob => setCurrentFilePreview(URL.createObjectURL(blob)));
+                setCurrentFilePreview("/api/File/GetFileBlob?filePath=" + fullPath);
+                setIsLoadingPreview(false);
                 break;
             case "mp4":
             case "webm":
             case "mov":
                 setCurrentFileType("Video");
-                authFetch("/api/File/GetFileBlob?filePath=" + fullPath)
-                    .then(res => res.blob())
-                    .then(blob => setCurrentFilePreview(URL.createObjectURL(blob)));
+                setCurrentFilePreview("/api/File/GetFileBlob?filePath=" + fullPath);
+                setIsLoadingPreview(false);
                 break;
             default:
                 setCurrentFileType("Unknown");
+                setIsLoadingPreview(false);
                 break;
         }
         setCurrentFileName(file);
@@ -536,7 +564,15 @@ function DriveFolderView() {
                     </Link>
                 ))}
             </div>
-            {isOpen && (<FilePreview curFilePath={actualFolder + currentFileName} onDivClick={() => handlePreviewClose()} fileBlob={currentFilePreview} type={currentFileType} handleFileChangingAction={() => handleFileChanged() }></FilePreview>)
+            {isOpen && (
+                <FilePreview 
+                    curFilePath={actualFolder + currentFileName} 
+                    onDivClick={() => handlePreviewClose()} 
+                    fileBlob={currentFilePreview} 
+                    type={currentFileType} 
+                    handleFileChangingAction={() => handleFileChanged() }
+                    isLoadingPreview={isLoadingPreview}>
+                </FilePreview>)
             }
             </div>
     );
