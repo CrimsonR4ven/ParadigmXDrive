@@ -343,13 +343,13 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                     <img
                         src={downloaden}
                         alt="move"
-                        style={{ height: "70%", cursor: "pointer" }}
+                        style={{ height: "40%", cursor: "pointer" }}
                         onClick={() => setIsMoveOpen(true)}
                     />
                     <img
                         src={downloaden}
                         alt="download"
-                        style={{ height: "70%", cursor: "pointer" }}
+                        style={{ height: "40%", cursor: "pointer" }}
                         onClick={handleFileDownload}
                     />
                 </div>
@@ -462,32 +462,38 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
         >
             <button
                 style={{
-                    backgroundColor: "#3a82f7",
+                    backgroundColor: "#d3d3d3", 
                     border: "none",
-                    color: "white",
-                    fontSize: "16px",
+                    color: "black",
+                    fontSize: "18px",
                     fontWeight: "bold",
-                    width: "30%",
-                    height: "70%",
-                    borderRadius: "8px",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%", 
                     cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                 }}
                 onClick={() => setImageScale(prev => Math.max(prev - 0.1, 0.1))}
             >
                 -
             </button>
-            <span style={{ color: "white" }}>{Math.round(imageScale * 100)}%</span>
+            <span style={{ color: "white", fontWeight: "bold" }}>{Math.round(imageScale * 100)}%</span>
             <button
                 style={{
-                    backgroundColor: "#3a82f7",
+                    backgroundColor: "#d3d3d3", 
                     border: "none",
-                    color: "white",
-                    fontSize: "16px",
+                    color: "black",
+                    fontSize: "18px",
                     fontWeight: "bold",
-                    width: "30%",
-                    height: "70%",
-                    borderRadius: "8px",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%", 
                     cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                 }}
                 onClick={() => setImageScale(prev => Math.min(prev + 0.1, 3))}
             >
