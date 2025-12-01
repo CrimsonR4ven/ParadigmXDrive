@@ -351,8 +351,8 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
             }}
         >
             {type == "Image" && (<img className="previewImage" src={fileBlob} alt="file" style={{ height: "85%", zIndex: 1002 }} />)}
-            {type === "Video" && (<video controls style={{ maxHeight: "85%", maxWidth: "85%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support video playback. </video>)}
-            {type === "Audio" && (<audio controls style={{ width: "60%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support audio playback. </audio>)}
+            {type === "Video" && (<video controls style={{ Height: "85%", maxWidth: "85%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support video playback. </video>)}
+            {type === "Audio" && (<audio controls style={{ width: "40%", zIndex: 1002 }}> <source src={fileBlob} /> Your browser does not support audio playback. </audio>)}
             {type === "Text" && (
                 <div style={{
                     background: "rgb(30,30,30)",
@@ -497,6 +497,7 @@ function DriveFolderView() {
             case "mp3":
             case "wav":
             case "ogg":
+            case "flac":
                 setCurrentFileType("Audio");
                 setCurrentFilePreview("/api/File/GetFileBlob?filePath=" + fullPath);
                 setIsLoadingPreview(false);
@@ -504,6 +505,8 @@ function DriveFolderView() {
             case "mp4":
             case "webm":
             case "mov":
+            case "mkv":
+            case "avi":
                 setCurrentFileType("Video");
                 setCurrentFilePreview("/api/File/GetFileBlob?filePath=" + fullPath);
                 setIsLoadingPreview(false);
@@ -539,7 +542,8 @@ function DriveFolderView() {
 
     return (
         <div>
-            <h1>Folder: {actualFolder}</h1>
+            <h1>Folder: {actualFolder.split('/').at(-1)}</h1>
+            <p style={{color:"RGB(30,30,30)"}}>Path: {actualFolder}</p>
             <div className="appcontainer">
                 {folders.Subfolders?.map((folder, i) => (
                     <Link
