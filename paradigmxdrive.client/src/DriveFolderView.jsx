@@ -304,54 +304,34 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                     Loading preview...
                 </div>
             )}
-            <div
-                style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    width: "100vw",
-                    height: "4vh",
-                    backgroundColor: "rgb(30,30,30)",
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "0 15px",
-                    zIndex: 2000,
-                    borderRadius: "0 0 16px 16px",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
-                    userSelect: "none"
-                }}
-            >
-                <img
-                    src={dokumenten}
-                    alt="file"
-                    style={{ height: "70%", marginRight: 10 }}
-                />
-
-                <p
-                    style={{
-                        color: "white",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        cursor: "pointer"
-                    }}
-                    onClick={handleRenameOpen}
-                >
+            <div style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100vw",
+                height: "50px", // bigger
+                backgroundColor: "rgb(30,30,30)",
+                display: "flex",
+                alignItems: "center",
+                padding: "0 15px",
+                zIndex: 2000,
+                borderRadius: "0 0 16px 16px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                userSelect: "none"
+            }}>
+                <img src={dokumenten} alt="file" style={{ height: "70%", marginRight: 10, maxHeight: "80%" }} />
+                <p style={{
+                    color: "white",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    cursor: "pointer"
+                }} onClick={handleRenameOpen}>
                     {fileName}
                 </p>
-                
+
                 <div style={{ marginLeft: "auto", display: "flex", gap: "18px" }}>
-                    <img
-                        src={downloaden}
-                        alt="move"
-                        style={{ height: "40%", cursor: "pointer" }}
-                        onClick={() => setIsMoveOpen(true)}
-                    />
-                    <img
-                        src={downloaden}
-                        alt="download"
-                        style={{ height: "40%", cursor: "pointer" }}
-                        onClick={handleFileDownload}
-                    />
+                    <img src={downloaden} alt="move" style={{ height: "24px", cursor: "pointer" }} onClick={() => setIsMoveOpen(true)} />
+                    <img src={downloaden} alt="download" style={{ height: "24px", cursor: "pointer" }} onClick={handleFileDownload} />
                 </div>
             </div>
         <div
