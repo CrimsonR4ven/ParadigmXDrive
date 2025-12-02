@@ -91,5 +91,40 @@ namespace ParadigmXDrive.Server.Controllers
             System.IO.File.Move(filePath, newPath);
             return Ok();
         }
+        
+        [HttpPost("UploadFile")]
+        [RequestSizeLimit(long.MaxValue)]
+        public async Task<IActionResult> UploadFile(IFormFile file, string path)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return BadRequest("No file received.");
+
+                if (string.IsNullOrEmpty(path))
+                    return BadRequest("Upload path missing.");
+
+                string savePath = Path.Combine(path, file.FileName);
+                int i = 0;
+                while (System.IO.File.Exists(Path.Combine(path, Path.GetFileNameWithoutExtension(savePath), i == 0 ? "" : i.ToString(), Path.GetExtension(savePath))))
+                {
+                    i++;
+                }
+                
+                savePath = Path.Combine(path, Path.GetFileNameWithoutExtension(savePath), i == 0 ? "" : i.ToString(), Path.GetExtension(savePath));
+                    
+                using (var stream = new FileStream(savePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Upload failed.");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

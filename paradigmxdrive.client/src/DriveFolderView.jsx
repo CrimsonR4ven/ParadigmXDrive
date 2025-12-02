@@ -500,6 +500,9 @@ function DriveFolderView() {
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
     const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD";
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragCounter, setDragCounter] = useState(0);
+
 
     async function populateWeatherData(folder) {
         const response = await authFetch('/api/File/GetFolderData?folderPath=' + folder);
@@ -581,6 +584,60 @@ function DriveFolderView() {
         setIsOpen(false);
     };
 
+    const handleDragEnter = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragCounter(prev => prev + 1);
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragCounter(prev => {
+            const newCount = prev - 1;
+            if (newCount === 0) setIsDragging(false);
+            return newCount;
+        });
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleDrop = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setDragCounter(0);
+        setIsDragging(false);
+
+        const files = e.dataTransfer.files;
+        if (!files || files.length === 0) return;
+
+        for (let file of files) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("path", actualFolder); 
+
+            try {
+                const uploadRes = await authFetch("/api/File/UploadFile", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!uploadRes.ok) {
+                    console.error("Upload failed", uploadRes.status);
+                }
+            } catch (err) {
+                console.error("Upload error:", err);
+            }
+        }
+        
+        handleFileChanged();
+    };
+
     useEffect(() => {
         async function loadData() {
             const data = await populateWeatherData(actualFolder);
@@ -590,6 +647,20 @@ function DriveFolderView() {
         loadData();
     }, [actualFolder]);
 
+    useEffect(() => {
+        window.addEventListener("dragenter", handleDragEnter);
+        window.addEventListener("dragleave", handleDragLeave);
+        window.addEventListener("dragover", handleDragOver);
+        window.addEventListener("drop", handleDrop);
+
+        return () => {
+            window.removeEventListener("dragenter", handleDragEnter);
+            window.removeEventListener("dragleave", handleDragLeave);
+            window.removeEventListener("dragover", handleDragOver);
+            window.removeEventListener("drop", handleDrop);
+        };
+    }, [actualFolder]);
+    
     if (!folders) {
         return <p>Loading {actualFolder}...</p>;
     }
@@ -632,6 +703,29 @@ function DriveFolderView() {
                     isLoadingPreview={isLoadingPreview}>
                 </FilePreview>)
             }
+            {isDragging && (
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        backdropFilter: "blur(4px)",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 5000,
+                        color: "white",
+                        fontSize: "32px",
+                        fontWeight: "bold",
+                        border: "4px dashed white"
+                    }}
+                >
+                    Drop files to upload into: {actualFolder}
+                </div>
+            )}
             </div>
     );
 }
