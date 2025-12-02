@@ -401,10 +401,8 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
 
                             {fileBlob.map((entry, index) => {
-                                // proper display name
-                                const displayName = entry.fullName;
-
-                                // indent based on nested folder level
+                                const displayName = entry.name;
+                                
                                 const depth = (entry.fullName.match(/\//g) || []).length - (entry.isDirectory ? 1 : 0);
 
                                 return (
