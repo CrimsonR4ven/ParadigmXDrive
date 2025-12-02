@@ -399,15 +399,36 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                     <h2>ZIP Content</h2>
                     {Array.isArray(fileBlob) && fileBlob.length > 0 ? (
                         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                            {fileBlob.map((entry, index) => (
-                                <li key={index} style={{ marginBottom: "10px" }}>
-                                    {entry.IsDirectory ? (
-                                        <span style={{ color: "#4FC3F7" }}>📁 {entry.FullName}</span>
-                                    ) : (
-                                        <span>📄 {entry.FullName} ({entry.Size} bytes)</span>
-                                    )}
-                                </li>
-                            ))}
+
+                            {fileBlob.map((entry, index) => {
+                                // proper display name
+                                const displayName = entry.fullName;
+
+                                // indent based on nested folder level
+                                const depth = (entry.fullName.match(/\//g) || []).length - (entry.isDirectory ? 1 : 0);
+
+                                return (
+                                    <li
+                                        key={index}
+                                        style={{
+                                            marginBottom: "8px",
+                                            paddingLeft: `${depth * 20}px`,
+                                            display: "flex",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        {entry.isDirectory ? (
+                                            <span style={{ color: "#4FC3F7" }}>
+                                    📁 {displayName}
+                                </span>
+                                        ) : (
+                                            <span>
+                                    📄 {displayName} ({entry.size} bytes)
+                                </span>
+                                        )}
+                                    </li>
+                                );
+                            })}
                         </ul>
                     ) : (
                         <p>No files found in ZIP.</p>
