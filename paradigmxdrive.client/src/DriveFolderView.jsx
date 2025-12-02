@@ -417,11 +417,11 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                                     >
                                         {entry.isDirectory ? (
                                             <span style={{ color: "#4FC3F7" }}>
-                                    📁 {displayName}
+                                    📁 {entry.fullName.split('/').at(-2)}
                                 </span>
                                         ) : (
                                             <span>
-                                    📄 {displayName} ({entry.size} bytes)
+                                    📄 {entry.name} ({entry.size} bytes)
                                 </span>
                                         )}
                                     </li>
