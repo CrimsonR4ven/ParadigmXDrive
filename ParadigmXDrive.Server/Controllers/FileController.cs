@@ -94,7 +94,7 @@ namespace ParadigmXDrive.Server.Controllers
         
         [HttpPost("UploadFile")]
         [RequestSizeLimit(long.MaxValue)]
-        public async Task<IActionResult> UploadFile(IFormFile file, string path)
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile file, [FromForm] string path)
         {
             try
             {
