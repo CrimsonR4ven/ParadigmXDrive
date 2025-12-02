@@ -106,12 +106,12 @@ namespace ParadigmXDrive.Server.Controllers
 
                 string savePath = Path.Combine(path, file.FileName);
                 int i = 0;
-                while (System.IO.File.Exists(Path.Combine(path, Path.GetFileNameWithoutExtension(savePath), i == 0 ? "" : i.ToString(), Path.GetExtension(savePath))))
+                while (System.IO.File.Exists(Path.Combine(path, Path.GetFileNameWithoutExtension(savePath) + (i == 0 ? "" : i.ToString()) + Path.GetExtension(savePath))))
                 {
                     i++;
                 }
                 
-                savePath = Path.Combine(path, Path.GetFileNameWithoutExtension(savePath), i == 0 ? "" : i.ToString(), Path.GetExtension(savePath));
+                savePath = Path.Combine(path, Path.GetFileNameWithoutExtension(savePath) + (i == 0 ? "" : i.ToString()) + Path.GetExtension(savePath));
                     
                 using (var stream = new FileStream(savePath, FileMode.Create))
                 {
