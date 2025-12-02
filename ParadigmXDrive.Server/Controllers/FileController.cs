@@ -126,5 +126,34 @@ namespace ParadigmXDrive.Server.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+        
+        [HttpGet("GetZipContent")]
+        public async Task<IActionResult> GetZipContent(string filePath)
+        {
+            if (!System.IO.File.Exists(filePath))
+                return NotFound("File not found.");
+
+            var extension = Path.GetExtension(filePath).ToLower(); 
+
+            try
+            {
+                using var archive = System.IO.Compression.ZipFile.OpenRead(filePath);
+
+                var list = archive.Entries.Select(e => new
+                {
+                    FullName = e.FullName,
+                    Name = e.Name,
+                    IsDirectory = e.FullName.EndsWith("/"),
+                    Size = e.Length
+                }).ToList();
+
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, "ZIP read failed.");
+            }
+        }
     }
 }

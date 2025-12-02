@@ -384,6 +384,36 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
                 }}>
                     {fileBlob}
                 </div>)}
+            {type === "Zip" && (
+                <div style={{
+                    background: "rgb(30,30,30)",
+                    color: "white",
+                    padding: "20px",
+                    width: "60vw",
+                    height: "70vh",
+                    overflowY: "auto",
+                    borderRadius: "12px",
+                    fontFamily: "monospace",
+                    zIndex: 1002
+                }}>
+                    <h2>ZIP Content</h2>
+                    {Array.isArray(fileBlob) && fileBlob.length > 0 ? (
+                        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                            {fileBlob.map((entry, index) => (
+                                <li key={index} style={{ marginBottom: "10px" }}>
+                                    {entry.IsDirectory ? (
+                                        <span style={{ color: "#4FC3F7" }}>📁 {entry.FullName}</span>
+                                    ) : (
+                                        <span>📄 {entry.FullName} ({entry.Size} bytes)</span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No files found in ZIP.</p>
+                    )}
+                </div>
+            )}
         </div>
 
         {type == "Unknown" && (<div
@@ -499,7 +529,7 @@ function DriveFolderView() {
     const {folders, setFolders} = useGlobalState();
     const searchString = useSearch();
     const folderPath = searchString.split('&')[0].split('=')[1];
-    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme%20SSD";
+    const actualFolder = folderPath ? decodeURIComponent(folderPath) : "/media/pi/Extreme SSD";
     const [isDragging, setIsDragging] = useState(false);
     const [dragCounter, setDragCounter] = useState(0);
 
@@ -567,6 +597,15 @@ function DriveFolderView() {
                 setCurrentFileType("Video");
                 setCurrentFilePreview("/api/File/GetFileBlob?filePath=" + fullPath);
                 setIsLoadingPreview(false);
+                break;
+            case "zip":
+                setCurrentFileType("Zip");
+                authFetch("/api/File/GetZipContent?filePath=" + fullPath)
+                    .then(res => res.json())
+                    .then(content => {
+                        setCurrentFilePreview(content);
+                        setIsLoadingPreview(false);
+                    });
                 break;
             default:
                 setCurrentFileType("Unknown");
