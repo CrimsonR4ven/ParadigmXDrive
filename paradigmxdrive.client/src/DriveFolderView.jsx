@@ -116,7 +116,7 @@ function MoveWindow({ curFilePath, handleMoveClose, handleSuccess }) {
                 style={{
                     position: "fixed",
                     top: "20vh",
-                    left: "30vw",
+                    left: "Calc(30vw - 20px)",
                     width: "40vw",
                     height: "60vh",
                     backgroundColor: "rgb(30,30,30)",
@@ -728,7 +728,7 @@ function DriveFolderView() {
             <h1>Folder: {actualFolder.split('/').at(-1)}</h1>
             <p style={{color:"RGB(30,30,30)"}}>Path: {actualFolder}</p>
             <div className="appcontainer">
-                {folders.Subfolders?.map((folder, i) => (
+                {folders.Subfolders?.sort((a, b) => a.localeCompare(b)).map((folder, i) => (
                     <Link
                         href={`/folder?folder=${encodeURIComponent(actualFolder + folder)}`}
                         key={i}
@@ -740,7 +740,7 @@ function DriveFolderView() {
                     </Link>
                 ))}
 
-                {folders.Files?.map((file, i) => (
+                {folders.Files?.sort((a, b) => a.Name.localeCompare(b.Name)).map((file, i) => (
                     <Link
                         key={`file-${i}`}
                         onClick={(e) => { e.preventDefault(); handlePreviewOpen(file.Name) }}
