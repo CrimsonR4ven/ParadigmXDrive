@@ -358,7 +358,7 @@ function FilePreview({ fileBlob, curFilePath, onDivClick, type, handleFileChangi
             {type === "Video" && (
                 <video 
                     controls 
-                    style={{ Height: "85%", maxWidth: "85%", zIndex: 1002 }}> 
+                    style={{ Width: "85%", zIndex: 1002 }}> 
                     <source src={fileBlob} /> 
                     Your browser does not support video playback. 
                 </video>)}
