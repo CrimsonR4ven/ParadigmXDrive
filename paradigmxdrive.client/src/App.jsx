@@ -1,6 +1,7 @@
 ﻿import { Link, Route, Switch, useLocation, useRoute } from "wouter";
 import { useState } from "react";
 import DriveFolderView from './DriveFolderView.jsx'
+import KanbanView from './KanbanView.jsx'
 import ErrorView from './ErrorView.jsx'
 import Login from './Login.jsx'
 import { ProtectedRoute, useAuth, logout } from './AuthWrapper.jsx'
@@ -111,7 +112,7 @@ function App()
                 </Route>
                 <Route path="/kanban">
                     <ProtectedRoute>
-                        <DriveFolderView />
+                        <KanbanView />
                     </ProtectedRoute>
                 </Route>
             </Switch>
