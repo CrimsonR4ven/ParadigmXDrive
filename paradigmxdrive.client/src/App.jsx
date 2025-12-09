@@ -29,7 +29,7 @@ function App()
         </div>
         <div className="TopNavContainer">
             <div className={`${location == "/" || location == "/folder" ? "active" : ""}`}><Link href="/" className={`${location === "/" || location == "/folder" ? "active" : ""}`}>x</Link></div>
-            <div className={`${location === "/sa" ? "active" : ""}`}><Link href="/sa" className={`${location === "/sa" ? "active" : ""}`}>y</Link></div>
+            <div className={`${location === "/kanban" ? "active" : ""}`}><Link href="/kanban" className={`${location === "/kanban" ? "active" : ""}`}>y</Link></div>
             <div className={`${location === "/as" ? "active" : ""}`}><Link href="/as" className={`${location === "/as" ? "active" : ""}`}>z</Link></div>
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: 'whitesmoke', fontSize: '14px' }}>
@@ -51,7 +51,50 @@ function App()
                 </button>
             </div>
         </div>
-        <div className="SideNavContainer">
+        <div className="SideNavContainer" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            padding: '10px 0'
+        }}>
+            <Switch>
+                <Route path="/kanban">
+                    <Link href="/kanban">
+                        <div style={{
+                            width: '100%',
+                            height: '5vh',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '0 16px 16px 0',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            fontSize: '20px'
+                        }}>
+                            📋
+                        </div>
+                    </Link>
+                </Route>
+                <Route>
+                    <Link href="/folder">
+                        <div style={{
+                            width: '100%',
+                            height: '5vh',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '0 16px 16px 0',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            fontSize: '20px'
+                        }}>
+                            📁
+                        </div>
+                    </Link>
+                </Route>
+            </Switch>
         </div>
         <div className="ContentBox scrollable">
         <GlobalStateContext.Provider value={{ folders, setFolders }}>
@@ -62,6 +105,11 @@ function App()
                     </ProtectedRoute>
                 </Route>
                 <Route path="/folder">
+                    <ProtectedRoute>
+                        <DriveFolderView />
+                    </ProtectedRoute>
+                </Route>
+                <Route path="/kanban">
                     <ProtectedRoute>
                         <DriveFolderView />
                     </ProtectedRoute>
