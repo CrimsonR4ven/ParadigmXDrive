@@ -354,7 +354,7 @@ function KanbanView() {
 
     const loadTasks = async () => {
         try {
-            const result = await window.storage.get('kanban-tasks');
+            const result = localStorage.getItem('kanban-tasks');
             if (result?.value) {
                 setTasks(JSON.parse(result.value));
             }
@@ -365,7 +365,7 @@ function KanbanView() {
 
     const saveTasks = async (newTasks) => {
         try {
-            await window.storage.set('kanban-tasks', JSON.stringify(newTasks));
+            localStorage.setItem('kanban-tasks', JSON.stringify(newTasks));
             setTasks(newTasks);
         } catch (error) {
             console.error('Failed to save tasks:', error);
